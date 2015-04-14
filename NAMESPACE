@@ -1,0 +1,16 @@
+export(
+crpolyX,crpolyXT, factorsplit,
+sivipm, 
+vect2polyX, vect2polyXT,
+ sivipboot, 
+ summary.poly,  print.poly,
+ bind.polyX,   summary.polyX,  print.polyX, takeoff.polyX)
+exportClasses(poly, polyX)
+exportMethods(bind, takeoff)
+import(methods, seqinr)
+S3method(print, polyX)
+S3method(print, poly)
+S3method(summary, polyX)
+S3method(summary, poly)
+
+

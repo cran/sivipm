@@ -1,0 +1,206 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Example exX18Y2: 18 variables including qualitative variables
+> # split into 0-1  or -1/+1 variables. No missing. 2 responses.
+> # Raw data are on file X18Y2.txt
+> # Corresponding transformed data  are on  file XY180.txt
+> 
+> 
+> library("sivipm")
+Loading required package: seqinr
+> 
+> # -------------------------------------
+> # READ DATA
+> # X18Y2 <-read.table("../inst/extdata/X18Y2.txt",  header=TRUE)
+> datancol <- ncol(X18Y2)
+> nvar=datancol -2
+> X = X18Y2[,1:nvar]
+> Y = X18Y2[,(nvar+1):datancol]
+> varnamesX18 <- colnames(X)
+> 
+> # -------------------------------------
+> #  CREATE POLYNOME
+> # monomes <- scan("../inst/extdata/mononamesXY180.txt", what=character(), sep="\n")
+> monomes <- scan(system.file("extdata", "mononamesXY180.txt",package="sivipm"),  what=character(), sep="\n")
+Read 158 items
+> P <- vect2polyX(X, monomes)
+> 
+> # -------------------------------------
+> # CALCULATIONS
+> print("TSIVIP without alea")
+[1] "TSIVIP without alea"
+> nc=2
+> # too long: print(sivipm(Y, P,nc))
+> res1 <- sivipm(Y[,1], P,nc)
+> print(res1)
+$fo.isivip
+        ALTI         MACH       POWERS          EAI          CAP          YAW 
+1.169655e-04 3.170459e-03 1.146044e-03 3.239249e-03 5.326001e-04 5.283407e-05 
+        ROLL        PITCH          VIS           RH           TA        HBASE 
+8.227426e-04 5.619456e-04 8.672693e-04 9.587501e-03 6.195093e-03 1.605999e-03 
+        HOUR        MODEL       CLOUDS       IHAZE1       IHAZE2       IHAZE3 
+5.201071e-02 2.675323e-03 8.987178e-03 2.623191e-03 1.657010e-02 4.977677e-03 
+
+$tsivip
+       ALTI        MACH      POWERS         EAI         CAP         YAW 
+0.083319445 0.066190410 0.092635835 0.060196890 0.010544439 0.084238013 
+       ROLL       PITCH         VIS          RH          TA       HBASE 
+0.009247021 0.084131556 0.120828055 0.164963460 0.179487781 0.056785359 
+       HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
+0.405366044 0.028182504 0.158786821 0.037072451 0.096611570 0.039213904 
+
+$percentage
+      HOUR         TA         RH     CLOUDS        VIS     IHAZE2     POWERS 
+22.8015350 10.0960526  9.2790705  8.9316392  6.7964872  5.4343281  5.2106960 
+       YAW      PITCH       ALTI       MACH        EAI      HBASE     IHAZE3 
+ 4.7383248  4.7323367  4.6866561  3.7231608  3.3860297  3.1941337  2.2057526 
+    IHAZE1      MODEL        CAP       ROLL 
+ 2.0852975  1.5852447  0.5931168  0.5201380 
+
+$simca.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+$lazraq.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+> 
+> # compute tsivip Y by Y
+> nc <- 2
+> print(apply(Y, 2, sivipm, P, nc))
+$IRStot
+$IRStot$fo.isivip
+        ALTI         MACH       POWERS          EAI          CAP          YAW 
+1.169655e-04 3.170459e-03 1.146044e-03 3.239249e-03 5.326001e-04 5.283407e-05 
+        ROLL        PITCH          VIS           RH           TA        HBASE 
+8.227426e-04 5.619456e-04 8.672693e-04 9.587501e-03 6.195093e-03 1.605999e-03 
+        HOUR        MODEL       CLOUDS       IHAZE1       IHAZE2       IHAZE3 
+5.201071e-02 2.675323e-03 8.987178e-03 2.623191e-03 1.657010e-02 4.977677e-03 
+
+$IRStot$tsivip
+       ALTI        MACH      POWERS         EAI         CAP         YAW 
+0.083319445 0.066190410 0.092635835 0.060196890 0.010544439 0.084238013 
+       ROLL       PITCH         VIS          RH          TA       HBASE 
+0.009247021 0.084131556 0.120828055 0.164963460 0.179487781 0.056785359 
+       HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
+0.405366044 0.028182504 0.158786821 0.037072451 0.096611570 0.039213904 
+
+$IRStot$percentage
+      HOUR         TA         RH     CLOUDS        VIS     IHAZE2     POWERS 
+22.8015350 10.0960526  9.2790705  8.9316392  6.7964872  5.4343281  5.2106960 
+       YAW      PITCH       ALTI       MACH        EAI      HBASE     IHAZE3 
+ 4.7383248  4.7323367  4.6866561  3.7231608  3.3860297  3.1941337  2.2057526 
+    IHAZE1      MODEL        CAP       ROLL 
+ 2.0852975  1.5852447  0.5931168  0.5201380 
+
+$IRStot$simca.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+$IRStot$lazraq.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+
+$IRMS
+$IRMS$fo.isivip
+        ALTI         MACH       POWERS          EAI          CAP          YAW 
+0.0023513741 0.0034396086 0.0044963894 0.0101544554 0.0016874620 0.0008313272 
+        ROLL        PITCH          VIS           RH           TA        HBASE 
+0.0013785607 0.0017448355 0.0001264164 0.0150547041 0.0074008274 0.0015337105 
+        HOUR        MODEL       CLOUDS       IHAZE1       IHAZE2       IHAZE3 
+0.0387335944 0.0009336725 0.0054079475 0.0008943918 0.0113378089 0.0049546375 
+
+$IRMS$tsivip
+      ALTI       MACH     POWERS        EAI        CAP        YAW       ROLL 
+0.09273028 0.07891999 0.10539752 0.12634780 0.03853816 0.09030197 0.03473901 
+     PITCH        VIS         RH         TA      HBASE       HOUR      MODEL 
+0.09045068 0.10536528 0.26852276 0.12032948 0.06816695 0.34589469 0.01350400 
+    CLOUDS     IHAZE1     IHAZE2     IHAZE3 
+0.06140131 0.01278159 0.07900968 0.02202980 
+
+$IRMS$percentage
+      HOUR         RH        EAI         TA     POWERS        VIS       ALTI 
+19.7154918 15.3054050  7.2016400  6.8586046  6.0075046  6.0056669  5.2854905 
+     PITCH        YAW     IHAZE2       MACH      HBASE     CLOUDS        CAP 
+ 5.1555567  5.1470802  4.5034362  4.4983243  3.8854166  3.4997850  2.1966186 
+      ROLL     IHAZE3      MODEL     IHAZE1 
+ 1.9800726  1.2556666  0.7697080  0.7285318 
+
+$IRMS$simca.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+$IRMS$lazraq.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+
+> # -------------------------------------
+> # COMPARISON: are the results the same when the data are provided
+> # in their transformed version?
+> # XY180 <-read.table("../inst/extdata/XY180.txt",  header=TRUE)
+> 
+> datancol <- ncol(XY180)
+> nX=datancol -2
+> dataexp = XY180[,1:nX]
+> Y = XY180[,(nX+1):datancol]
+> Pext <- vect2polyXT(varnamesX18, dataexp, monomes)
+> res2 <- sivipm(Y[,1], Pext,nc)
+> print(res2)
+$fo.isivip
+          V1           V2           V3           V4           V5           V6 
+1.169655e-04 3.170459e-03 1.146044e-03 3.239249e-03 5.326001e-04 5.283407e-05 
+          V7           V8           V9          V10          V11          V12 
+8.227426e-04 5.619456e-04 8.672693e-04 9.587501e-03 6.195093e-03 1.605999e-03 
+         V13          V14          V15          V16          V17          V18 
+5.201071e-02 2.675323e-03 8.987178e-03 2.623191e-03 1.657010e-02 4.977677e-03 
+
+$tsivip
+       ALTI        MACH      POWERS         EAI         CAP         YAW 
+0.083319445 0.066190410 0.092635835 0.060196890 0.010544439 0.084238013 
+       ROLL       PITCH         VIS          RH          TA       HBASE 
+0.009247021 0.084131556 0.120828055 0.164963460 0.179487781 0.056785359 
+       HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
+0.405366044 0.028182504 0.158786821 0.037072451 0.096611570 0.039213904 
+
+$percentage
+      HOUR         TA         RH     CLOUDS        VIS     IHAZE2     POWERS 
+22.8015350 10.0960526  9.2790705  8.9316392  6.7964872  5.4343281  5.2106960 
+       YAW      PITCH       ALTI       MACH        EAI      HBASE     IHAZE3 
+ 4.7383248  4.7323367  4.6866561  3.7231608  3.3860297  3.1941337  2.2057526 
+    IHAZE1      MODEL        CAP       ROLL 
+ 2.0852975  1.5852447  0.5931168  0.5201380 
+
+$simca.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+$lazraq.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+> res2$fo.isivip <- res2$fo.isivip[1:18]
+> names(res2$fo.isivip) = names(res1$fo.isivip)
+> print(all.equal(res1, res2))
+[1] TRUE
+> 
+> proc.time()
+   user  system elapsed 
+  4.067   0.083   4.200 

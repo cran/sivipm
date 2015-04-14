@@ -1,0 +1,134 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Example exXY180: transformed data,  monomes description on a file.
+> # Qualitative variables split into 0-1 or -1/+1 variables.
+> # 2 responses. It is exX18Y2, with transformed data
+> library("sivipm")
+Loading required package: seqinr
+> 
+> # -------------------------------------
+> # READ DATA (transformed data)
+> 
+> #  XY180 <-read.table("../inst/extdata/XY180.txt",  header=TRUE)
+> 
+> datancol <- ncol(XY180)
+> nX=datancol -2
+> X180 = XY180[,1:nX]
+> Y180 = XY180[,(nX+1):datancol]
+> # -------------------------------------
+> #  MONOME DESCRIPTION: monomes coded by the inputs numbers
+> Pexp <- as.character(1:18)
+> # derniers: 17, 18
+> for (i in 1:13) {
++   Pexp <- c(Pexp, paste(i,"*",i, sep=""))
++ }
+> # dernier 13*13
+> for (i in 1:13) {
++     j <- Pexp[18+i]
++      Pexp <-  c(Pexp, paste(j,"*",i, sep=""))
++ }
+> # derniers: 31*13
+> for (i in 1:12 ){
++   for (j in (i+1):13) {
++     Pexp <- c(Pexp, paste(i, "*", j,sep=""))
++    }
++ }
+> # derniers: 12*13
+> 
+> for (i in 1:18) {
++     if (i != 15)
++     Pexp <- c(Pexp, paste("15*",i,sep=""))
++   }
+> # derniers: 15*14, 15*16, 15*17, 15*18
+> for (i in 16:18) {
++     for (j in 9:11) {
++       Pexp <- c(Pexp, paste(i, "*", j,sep=""))
++    }
++ }
+> Pexp <- c(Pexp, c("13*16"), c("13*17"), c("13*18"),
++              c("14*16"), c("14*17"), c("14*18"),
++             c("14*9"), c("14*10"), c("12*14"), c("2*14"))
+> 
+> # X18Y2 <-read.table("../inst/extdata/X18Y2.txt",  header=TRUE)
+> varnames <- colnames(X18Y2)[1:18]
+> zz <- vect2polyXT(varnames , X180, Pexp)
+> 
+> 
+> # -------------------------------------
+> # CALCULATIONS 
+> print("TSIVIP without alea on the first response")
+[1] "TSIVIP without alea on the first response"
+> nc <- 21# idem que avant-derniere page du raptech 2012
+> nc <- 2 # plus rapide
+> res <- sivipm(Y180[,1], zz,nc)
+> print(res)
+$fo.isivip
+          V1           V2           V3           V4           V5           V6 
+1.169655e-04 3.170459e-03 1.146044e-03 3.239249e-03 5.326001e-04 5.283407e-05 
+          V7           V8           V9          V10          V11          V12 
+8.227426e-04 5.619456e-04 8.672693e-04 9.587501e-03 6.195093e-03 1.605999e-03 
+         V13          V14          V15          V16          V17          V18 
+5.201071e-02 2.675323e-03 8.987178e-03 2.623191e-03 1.657010e-02 4.977677e-03 
+
+$tsivip
+       ALTI        MACH      POWERS         EAI         CAP         YAW 
+0.083319445 0.066190410 0.092635835 0.060196890 0.010544439 0.084238013 
+       ROLL       PITCH         VIS          RH          TA       HBASE 
+0.009247021 0.084131556 0.120828055 0.164963460 0.179487781 0.056785359 
+       HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
+0.405366044 0.028182504 0.158786821 0.037072451 0.096611570 0.039213904 
+
+$percentage
+      HOUR         TA         RH     CLOUDS        VIS     IHAZE2     POWERS 
+22.8015350 10.0960526  9.2790705  8.9316392  6.7964872  5.4343281  5.2106960 
+       YAW      PITCH       ALTI       MACH        EAI      HBASE     IHAZE3 
+ 4.7383248  4.7323367  4.6866561  3.7231608  3.3860297  3.1941337  2.2057526 
+    IHAZE1      MODEL        CAP       ROLL 
+ 2.0852975  1.5852447  0.5931168  0.5201380 
+
+$simca.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+$lazraq.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+> # idem que avant-derniere page du raptech 2012
+> 
+> # -------------------------------------
+> # COMPARE WITH exX18Y2 (raw data provided)
+>  nvar <- length(varnames) # number of "raw" variables
+> datancol <- ncol(X18Y2)
+> X = X18Y2[,1:nvar]
+> Y = X18Y2[,(nvar+1):datancol]
+> 
+> #X[X[,"MODEL"]==0, "MODEL"]=-1
+> 
+> zz=vect2polyX(X,Pexp)
+> res2 <- sivipm(Y[,1], zz, nc)
+> res$fo.isivip <- res$fo.isivip[1:nvar]
+> names(res2$fo.isivip) = names(res$fo.isivip)
+> print(all.equal(res, res2))
+[1] TRUE
+> 
+>                  
+> 
+> proc.time()
+   user  system elapsed 
+  2.436   0.057   2.515 

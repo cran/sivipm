@@ -1,0 +1,252 @@
+
+R version 3.1.1 (2014-07-10) -- "Sock it to Me"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-unknown-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> 
+> # Example cornell0: raw data, 7 inputs, 1 response, no missing
+> #
+> library("sivipm")
+Loading required package: seqinr
+> 
+> # -------------------------------------
+> # READ DATA (raw data)
+> # cornell0 <-read.table("../inst/extdata/cornell0.txt",  header=TRUE)# essai direct
+> nvar <- 7
+> XCornell0 <- cornell0[,1:nvar]
+> YCornell0 <-as.data.frame( cornell0[,8])
+> colnames(YCornell0)="Y"
+> # -------------------------------------
+> # CREATION OF THE  polyX OBJECT STRUCTURE 
+> 
+> # 1/   MONOME VECTOR: monomes coded by the inputs numbers
+> monomes <- c("1","2","3", "4","5", "6", "7",
++              "1*3", "2*2", "2*4", "3*4", "5*5",   
++              "6*6", "7*7*7")
+> #  Creation of an object of class 'polyX'
+> P1 <- vect2polyX(XCornell0, monomes)
+> 
+> # 2/ MONOMES OF STANDARD TYPE
+> # Example: complete polynome degree 2
+> # Creation of an object of class 'polyX'
+> PP3 <- crpolyX(XCornell0,2, type="full")
+> print(PP3)
+Polynome description:
+Distillation + Reformat + NaphthaT + NaphthaC + Polymer + Alkylat + Gasoline + Distillation*Distillation +  
+Reformat*Distillation + NaphthaT*Distillation + NaphthaC*Distillation + Polymer*Distillation +  
+Alkylat*Distillation + Gasoline*Distillation + Reformat*Reformat + NaphthaT*Reformat +  
+NaphthaC*Reformat + Polymer*Reformat + Alkylat*Reformat + Gasoline*Reformat + NaphthaT*NaphthaT +  
+NaphthaC*NaphthaT + Polymer*NaphthaT + Alkylat*NaphthaT + Gasoline*NaphthaT + NaphthaC*NaphthaC +  
+Polymer*NaphthaC + Alkylat*NaphthaC + Gasoline*NaphthaC + Polymer*Polymer + Alkylat*Polymer +  
+Gasoline*Polymer + Alkylat*Alkylat + Gasoline*Alkylat + Gasoline*Gasoline 
+Polynome description using variable numbers:
+1 + 2 + 3 + 4 + 5 + 6 + 7 + 1*1 + 2*1 + 3*1 + 4*1 + 5*1 + 6*1 + 7*1 + 2*2 + 3*2 +  
+4*2 + 5*2 + 6*2 + 7*2 + 3*3 + 4*3 + 5*3 + 6*3 + 7*3 + 4*4 + 5*4 + 6*4 + 7*4 + 5*5 +  
+6*5 + 7*5 + 6*6 + 7*6 + 7*7 
+Number of observations: 12 
+> # -------------------------------------
+> # Illustration of  methods of class 'polyX'
+>  summary(P1)
+Number of observations:  12 
+Polynome degree:  3 
+Number of monomials:  14 
+Number of variables:  7 
+Polynome description:
+Distillation + Reformat + NaphthaT + NaphthaC + Polymer + Alkylat + Gasoline + Distillation*NaphthaT +  
+Reformat*Reformat + Reformat*NaphthaC + NaphthaT*NaphthaC + Polymer*Polymer + Alkylat*Alkylat +  
+Gasoline*Gasoline*Gasoline 
+Polynome description using variable numbers:
+1 + 2 + 3 + 4 + 5 + 6 + 7 + 1*3 + 2*2 + 2*4 + 3*4 + 5*5 + 6*6 + 7*7*7 
+> P2 <- vect2polyX(XCornell0, c(as.character(1:7), "3*3*3", "3*3"))
+> z2 <- bind.polyX(P1, P2 )
+> print(z2)
+Polynome description:
+Distillation + Reformat + NaphthaT + NaphthaC + Polymer + Alkylat + Gasoline + Distillation*NaphthaT +  
+Reformat*Reformat + Reformat*NaphthaC + NaphthaT*NaphthaC + Polymer*Polymer + Alkylat*Alkylat +  
+Gasoline*Gasoline*Gasoline + NaphthaT*NaphthaT*NaphthaT + NaphthaT*NaphthaT 
+Polynome description using variable numbers:
+1 + 2 + 3 + 4 + 5 + 6 + 7 + 1*3 + 2*2 + 2*4 + 3*4 + 5*5 + 6*6 + 7*7*7 + 3*3*3 +  
+3*3 
+Number of observations: 12 
+> 
+> 
+> # -------------------------------------
+> # CALCULATIONS
+> nc=2
+> 
+> print("TSIVIP without alea")
+[1] "TSIVIP without alea"
+> A <- sivipm(YCornell0, P1,  nc, options="tsivip")
+> print(A)
+$tsivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+   0.1743708    0.1051434    0.2620892    0.2404566    0.0775388    0.2554289 
+    Gasoline 
+   0.1445387 
+
+$percentage
+    NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
+   20.807893    20.279110    19.090423    13.843719    11.475274     8.347590 
+     Polymer 
+    6.155991 
+
+> # compute tsivip Y by Y: here same results, because there is only one Y
+> print(apply(YCornell0, 2, sivipm, P1, nc))
+$Y
+$Y$fo.isivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+0.0935179735 0.0006690142 0.0936659204 0.0666229905 0.0325265346 0.1294409978 
+    Gasoline 
+0.0732672626 
+
+$Y$tsivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+   0.1743708    0.1051434    0.2620892    0.2404566    0.0775388    0.2554289 
+    Gasoline 
+   0.1445387 
+
+$Y$percentage
+    NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
+   20.807893    20.279110    19.090423    13.843719    11.475274     8.347590 
+     Polymer 
+    6.155991 
+
+$Y$simca.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+$Y$lazraq.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+
+> 
+> 
+> print("TSIVIP with alea")
+[1] "TSIVIP with alea"
+> set.seed(15)
+> A <- sivipm(YCornell0, P1,  nc,  alea=TRUE, options="tsivip")
+> print(A)
+$tsivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+  0.17402558   0.10591759   0.26131640   0.23947364   0.07590046   0.25477785 
+    Gasoline 
+  0.14420031 
+
+$percentage
+    NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
+   20.811878    20.291132    19.072267    13.859823    11.484465     8.435536 
+     Polymer 
+    6.044899 
+
+$monosignif
+              Distillation                   Reformat 
+                      TRUE                       TRUE 
+                  NaphthaT                   NaphthaC 
+                      TRUE                       TRUE 
+                   Polymer                    Alkylat 
+                      TRUE                       TRUE 
+                  Gasoline      Distillation*NaphthaT 
+                      TRUE                       TRUE 
+         Reformat*Reformat          Reformat*NaphthaC 
+                      TRUE                       TRUE 
+         NaphthaT*NaphthaC            Polymer*Polymer 
+                      TRUE                       TRUE 
+           Alkylat*Alkylat Gasoline*Gasoline*Gasoline 
+                      TRUE                       TRUE 
+
+$correlalea
+             Y
+[1,] 0.1442915
+
+> 
+> 
+> print("ISIVIP ")
+[1] "ISIVIP "
+> A <- sivipm(YCornell0, P1,  nc, options="fo.isivip")
+> print(A)
+$fo.isivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+0.0935179735 0.0006690142 0.0936659204 0.0666229905 0.0325265346 0.1294409978 
+    Gasoline 
+0.0732672626 
+
+> 
+> 
+> print("SIMCARULE")
+[1] "SIMCARULE"
+> A <- sivipm(YCornell0, P1,  nc, options=c("simca"," lazraq"))
+> print(A)
+$simca.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+$lazraq.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+> 
+> 
+> 
+> print("ALL RESULTS IN A SINGLE INVOKATION")
+[1] "ALL RESULTS IN A SINGLE INVOKATION"
+> print(sivipm(YCornell0, P1,  nc))
+$fo.isivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+0.0935179735 0.0006690142 0.0936659204 0.0666229905 0.0325265346 0.1294409978 
+    Gasoline 
+0.0732672626 
+
+$tsivip
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+   0.1743708    0.1051434    0.2620892    0.2404566    0.0775388    0.2554289 
+    Gasoline 
+   0.1445387 
+
+$percentage
+    NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
+   20.807893    20.279110    19.090423    13.843719    11.475274     8.347590 
+     Polymer 
+    6.155991 
+
+$simca.signifcomponents
+  t1   t2 
+TRUE TRUE 
+
+$lazraq.signifcomponents
+   t1    t2 
+ TRUE FALSE 
+
+> 
+> 
+> print("BOOTSTRAP")
+[1] "BOOTSTRAP"
+> B=2
+> print(sivipboot(YCornell0,P1, B , nc, alpha=0.05))
+                 IC.inf    IC.sup
+Distillation 0.17138797 0.1893540
+Reformat     0.10263511 0.1028795
+NaphthaT     0.25708195 0.2838746
+NaphthaC     0.24332338 0.2481983
+Polymer      0.05090774 0.1368396
+Alkylat      0.21190378 0.2735927
+Gasoline     0.12949618 0.1324268
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  0.539   0.037   0.610 
