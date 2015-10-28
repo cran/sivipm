@@ -56,7 +56,7 @@ zz <- vect2polyXT(varnames , X180, Pexp)
 print("TSIVIP without alea on the first response")
 nc <- 21# idem que avant-derniere page du raptech 2012
 nc <- 2 # plus rapide
-res <- sivipm(Y180[,1], zz,nc)
+res <- sivipm(as.matrix(Y180[,1], ncol=1), zz,nc)
 print(res)
 # idem que avant-derniere page du raptech 2012
 
@@ -71,8 +71,8 @@ Y = X18Y2[,(nvar+1):datancol]
 
 zz=vect2polyX(X,Pexp)
 res2 <- sivipm(Y[,1], zz, nc)
-res$fo.isivip <- res$fo.isivip[1:nvar]
-names(res2$fo.isivip) = names(res$fo.isivip)
+res@fo.isivip <- res@fo.isivip[1:nvar]
+names(res2@fo.isivip) = names(res@fo.isivip)
 print(all.equal(res, res2))
 
                  

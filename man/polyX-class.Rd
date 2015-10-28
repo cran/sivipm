@@ -29,7 +29,13 @@
  \section{Methods}{
   \itemize{
     \item
-    \code{summary, print,  show}: display functions
+    \code{summary, print,  show}: display functions.
+     \code{print} has an optional argument, \code{all=FALSE}.
+     When it is
+     set to TRUE, all the monomes are displayed. Otherwise, only
+     the polynomial
+     degree, the number of monomials, the number of variables and
+     the number of observations.
     \item
     \code{bind}: bind several  polyX objects.
     See \code{\link{bind.polyX}}

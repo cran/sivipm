@@ -1,4 +1,4 @@
-###################################################################
+##################################################################
 # sivipm R package
 # Copyright INRA 2015
 # INRA, UR1404, Research Unit MaIAGE
@@ -25,10 +25,9 @@
 
 
 ##########################################################################
-# Calcul des indices de sensibilite isivip et tsivip après regression PLS
+# Compute the sensitivity indices isivip and tsivip after regression PLS
 ##########################################################################
-#  TSIVIP total or individual sensitivity indices or
-# rule implemented in SIMCA-P to determine the significative components
+#  Total or individual sensitivity indices SIVIP
 # @title compute several TSIVIP results 
 # @sivipm
 # @param Y outputs  data.frame 
@@ -38,13 +37,14 @@
 # Valid values: 'tsivip', 'isivip', 'signif', 'all'
 # @param graph if TRUE, display graph (for tsivip when alea =false)
 # @param alea alea is added (only for tsivip)
+# @param fast (if no missing only): fast procedure
 # @param output additional results are returned
 # @return
 # \itemize{
 # \item{tsivip}{ - when \code{options} include 'tsivip',  total sensitivity indices for each input variable and their percentage.}
 # \item{isivip}{ - when \code{options} include 'isivip',
-# first order individual sensitivity indices for each monome.
-# When alea=TRUE, the non significant monomes are removed}
+# first order individual sensitivity indices for each monomial.
+# When alea=TRUE, the non significant monomials are removed}
 # \item{SIMCA}{ - when \code{options} include 'simca',
 # the significative components (when no missing) calculated
 # by SIMCA-P rule,
@@ -57,26 +57,34 @@
 # @export
 
 sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca", 
-    "lazraq"), graph = FALSE, alea = FALSE, output = NULL) {
-    # Initialisation des retours
-    retour <- list()
+    "lazraq"), graph = FALSE, alea = FALSE, fast = FALSE,
+                   output = NULL) {
+    # Initialisation of the returned structures
+    retour <- sivip() # creation of an object of class 'sivip'
     retisivip <- NULL
     rettsivip <- NULL
     retsimca <- NULL
     retlaz <- NULL
     regpls <- NULL
+
     
-    # Acces aux donnees
+    # Access to the data
     data.exp <- XIndic@dataX.exp
-    if (!is.null(XIndic@Pindic)) {
+    nmono <-ncol(data.exp)
+    if (nc > nmono )
+      stop(paste("The number of components, ", nc, ", should be less or equal to the number of monomials, ", nmono, "\n", sep=""))
+    
+    
+    if (length(XIndic@Pindic@P) >0) {
         Indic <- XIndic@Pindic@indic
         nvar <- ncol(Indic)
     } else {
         Indic <- NULL
         nvar <- ncol(data.exp)
     }
+    Y <- as.matrix(Y) # in case of a vector=> a matrix with one column
     
-    # Acces aux options
+    # Access to the options
     opt.isivip <- any(grepl("isivip", options, ignore.case = TRUE)) || any(grepl("isivip", 
         output, ignore.case = TRUE))
     opt.tsivip <- any(grepl("tsivip", options, ignore.case = TRUE))
@@ -91,14 +99,19 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
         warning("sivipm : option graph ignored when tsivip not required")
     }
     
-    # avec/sans missing values
+    # with/without missing values
     if (any(is.na(data.exp)) || any(is.na(Y))) 
         na.miss <- TRUE else na.miss <- FALSE
     
-    # Faut-il calculer des sorties supplémentaires?
+    # with/without additional results
     if (!is.null(output)) 
         routput <- TRUE else routput <- FALSE
     
+    if (fast  && na.miss) {
+        warning("sivipm : option fast ignored when there are missing values.")
+        fast <- FALSE
+      }
+
     if (opt.simca && na.miss) {
         warning("sivipm : option simca ignored when there are missing values.")
         opt.simca <- FALSE
@@ -110,36 +123,44 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
     
     if (opt.simca || opt.laz) {
         # Call regpls2 with all outputs because Q2 required
-        regpls <- regpls2(Y, data.exp, nc, output = TRUE)
+      
+        regpls <- regpls2(Y, data.exp, nc,
+                          na.miss= na.miss, fast=fast, output = TRUE)
+        
         if (opt.simca) 
             retsimca <- fsimcarule(regpls$Q2)
         if (opt.laz) 
             retlaz <- rlaz(regpls$x.scores, Y, nc)
     }
+
+
     
-    
-    # pas de signif et (isivip ou (tsivip sans alea))
+    # significant components not required and
+    # (isivip or (tsivip without alea))
     if (is.null(regpls) && (opt.isivip || (opt.tsivip && alea == FALSE))) {
-        regpls <- regpls2(Y, data.exp, nc, output = routput)
+        regpls <- regpls2(Y, data.exp, nc,
+                          na.miss= na.miss, fast=fast, output = routput)
     }
     
     
     
     if (opt.isivip) {
-        retisivip <- isivip(regpls$VIP, data.exp)
+      retisivip <- isivip(regpls$VIP[, nc], data.exp)
+        # Consider only the VIP of the last component
     }
-    
+
     if (opt.tsivip) 
         {
-            if (all(is.na(Indic))) {
-                warning("sivipm : option tsivip ignored because there is no polynome description")
+            if (is.null(Indic) || all(is.na(Indic))) {
+                warning("sivipm : option tsivip ignored because there is no polynomial description")
             } else {
                 if (alea) {
-                  # cas avec alea
-                  rett <- tsivipalea(Y, XIndic, nc, output = routput)
+                  # case where there is alea
+                  rett <- tsivipalea(Y, XIndic, nc,
+                                     na.miss, fast=fast, output = routput)
                   if (!is.null(retisivip)) 
                     {
-                      # rajouter le isivip de l'alea parmi ceux-ci
+                      # add the isivip of the alea into retisivip
                       nvar <- ncol(Indic)
                       mono <- names(retisivip)
                       nmono <- length(mono)
@@ -148,7 +169,7 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
                       names(bb) <- c(mono[1:nvar], "X_alea", mono[(nvar + 1):nmono])
                       retisivip <- bb
                     }  # fin !is.null(retisivip)
-    # Oter des sorties ce qui concerne l'alea
+    # Remove from the outputs what is about the alea
     rett$isivipalea <- NULL
     nrett <- length(rett$tsivip)
     rett$tsivip <- rett$tsivip[-nrett]
@@ -163,7 +184,7 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
                   if (graph == TRUE) 
                     tsivipgraph(rettsivip$tsivip, retisivip, Indic, nc, alea)
                 } else {
-                  # cas sans alea
+                  # case where there is no alea
                   rettsivip <- tsivipnoalea(regpls$VIP, Y, Indic, nc)
                   if (graph == TRUE) {
                     tsivipgraph(rettsivip$tsivip, retisivip, Indic, nc, alea, rettsivip$Evol)
@@ -173,49 +194,85 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
             }  # end else
         }  # end options=='tsivip'
     
-    # Retour
-    
+    # Prepare the output    
     if (any(grepl("isivip", options))) {
         # First order isivip
-        retour$fo.isivip <- retisivip[1:nvar]
+        retour@fo.isivip <- retisivip[1:nvar]
+        if (!is.null(colnames(Indic))) {
+          names(retour@fo.isivip) <-  colnames(Indic)
+        }
     }
-    
-    retour <- c(retour, rettsivip)
-    retour <- c(retour, retsimca, retlaz)
-    
+
+     
+    for (nom in names(rettsivip)) {
+      slot(retour, nom) <- rettsivip[[nom]]
+    }
+    for (nom in names(retsimca)) {
+      slot(retour, nom) <- retsimca[[nom]]
+    }
+    for (nom in names(retlaz)) {
+      slot(retour, nom) <- retlaz[[nom]]
+    }
+   
     if (!is.null(regpls)) 
         {
-            retour$output <- list()
+          
             if (any(grepl("isivip", output, ignore.case = TRUE))) {
-                retour$output$isivip <- retisivip
+                retour@output$isivip <- retisivip
             }
             
             if (any(grepl("VIP", output))) {
-                retour$output$VIP <- regpls$VIP
-                retour$output$VIPind <- regpls$VIPind
+                retour@output$VIP <- regpls$VIP
+                retour@output$VIPind <- regpls$VIPind
                 regpls$VIP <- NULL
                 regpls$VIPind <- NULL
             }
-            if (any(grepl("RSS", output, ignore.case = TRUE))) {
-                retour$output$RSS <- regpls$RSS
-                regpls$RSS <- NULL
-            }
-            if (any(grepl("PRESS", output, ignore.case = TRUE))) {
-                retour$output$PRESS <- regpls$PRESS
-                regpls$PRESS <- NULL
-            }
+          # Results when there are no missing, only
+            # Ignored: PRESS and RSS are no more an option 
+           if (any(grepl("RSS", output, ignore.case = TRUE))) {
+             if (na.miss) {
+               warning("RSS is not calculated when there are missing values")
+             } else {
+                 retour@output$RSS <- regpls$RSS
+                 regpls$RSS <- NULL
+               }
+           }
+             if (any(grepl("PRESS", output, ignore.case = TRUE))) {
+               if (na.miss) {
+               warning("PRESS is not calculated when there are missing values")
+             } else {
+                 retour@output$PRESS <- regpls$PRESS
+                 regpls$PRESS <- NULL
+             }
+             }
+
+            
+
             if (any(grepl("Q2", output, ignore.case = TRUE))) {
-                retour$output$Q2 <- regpls$Q2
-                retour$output$Q2cum <- regpls$Q2cum
+              if (na.miss) {
+              warning("Q2 is not calculated when there are missing values")
+            } else {
+                retour@output$Q2 <- regpls$Q2
+                retour@output$Q2ckh <- regpls$Q2ckh
+                retour@output$Q2cum <- regpls$Q2cum
+                retour@output$Q2cum.percent <- sort((regpls$Q2cum/sum(regpls$Q2cum))*100, decreasing=TRUE)
+                # Put in column to homogeneize the display
+                retour@output$Q2cum <- matrix(retour@output$Q2cum, ncol=1, dimnames=list(names(retour@output$Q2cum), "Q2cum"))
+
+                retour@output$Q2cum.percent <- matrix(retour@output$Q2cum.percent, ncol=1, dimnames=list(names(retour@output$Q2cum.percent), "decreasing.Q2cum.percent"))
+                
                 regpls$Q2 <- NULL
                 regpls$Q2cum <- NULL
+                regpls$Q2ckh <- NULL
             }
+            }
+          
             if (any(grepl("betaNat", output, ignore.case = TRUE))) {
-                retour$output$betaNat <- regpls$betaNat
-                retour$output$betaNat0 <- regpls$betaNat0
+                retour@output$betaNat <- regpls$betaNat
+                retour@output$betaNat0 <- regpls$betaNat0
                 regpls$betaNat <- NULL
                 regpls$betaNat0 <- NULL
-            }
+             }
  
 
             if (any(grepl("PLS", output, ignore.case = TRUE))) {
@@ -230,14 +287,12 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
                 regpls$Q2cum <- NULL
 		 regpls$betaNat <- NULL
                 regpls$betaNat0 <- NULL
-                retour$output$PLS <- regpls
+                retour@output$PLS <- regpls
             }
-            if (length(retour$output) == 0) 
-                retour$output <- NULL
         }  # fin !regpls
     
     if (any(grepl("isivip", output, ignore.case = TRUE))) 
-        retour$output$isivip <- retisivip
+        retour@output$isivip <- retisivip
     
     return(retour)
 }  # end sivipm
@@ -252,19 +307,18 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
 
 fsimcarule <- function(Q2) {
     
-    a <- ncol(Q2)
+    #    a <- ncol(Q2)
     # signif <- as.integer(Q2[, a] >= 0.0975) s <- max(2, max(which(signif == 1)) +
     # 1) ret <- list(signifcomponents = s)
-    signif <- (Q2[, a] >= 0.0975)
-    names(signif) <- paste("t", 1:length(signif), sep = "")
-    ret <- list(simca.signifcomponents = signif)
-    return(ret)
+    signif <- (Q2 >= 0.0975)
+
+    return(list(simca.signifcomponents=signif))
 }
 
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-# Calcul des indices globaux tsivip
+# Compute the total (or 'global') indices tsivip
 # @title compute TSIVIP indices
 # @tsivipf
 # @param vecin VIP vector
@@ -275,7 +329,7 @@ fsimcarule <- function(Q2) {
 tsivipf <- function(vecin, Indic) {
     a <- isivip(vecin, t(Indic))
     tsivip <- t(Indic) %*% a
-    # AB 21/10/2013
+    
     tri <- sort(tsivip, index.return = TRUE, decreasing = TRUE)
     if (length(tri$x) == 0) {
         rank <- 1:length(tsivip)
@@ -299,14 +353,14 @@ tsivipgraph <- function(tsivip, isivip, Indic, nc, alea, Evol = NULL) {
     d <- seq(1, nc)
     grcomp <- (!is.null(Evol) && (nc > 1))
     if (grcomp) {
-        # on fera le graphe des composantes
+        # we will do the graph of the components
         nombrecomposantes <- d
         for (i in 1:(ncol(Indic) - 1)) {
             nombrecomposantes <- cbind(nombrecomposantes, d)
         }
         par(mfrow = c(2, 1))
     } else {
-        # on ne fera pas le graphe des composantes
+        # we won't do the graph of the components
         par(mfrow = c(1, 1))
     }
     sortsivip <- sort(tsivip, decreasing = TRUE, index.return = TRUE)
@@ -319,7 +373,7 @@ tsivipgraph <- function(tsivip, isivip, Indic, nc, alea, Evol = NULL) {
         las = 1)
     if (!is.null(isivip)) 
         {
-            # superposer les isivip des monomes unitaires
+            # superpose the isivip of the unit monomials
             visivip <- isivip[xsivip]
             barplot(visivip, add = TRUE, names.arg = rep("", length(visivip)), col = 1, 
                 angle = 45, density = 20, legend.text = "First order ISIVIP", space = 0, 
@@ -363,9 +417,11 @@ tsivipnoalea <- function(VIP, Y, Indic, nc = 2, graph = FALSE) {
     TSIVIPr <- matrix(nrow = nc, ncol = ncol(Indic))
     for (j in 1:nc) {
         VIPj <- VIP[, j]
+        
         aa <- tsivipf(VIPj, Indic)
         TSIVIP[j, ] <- aa[[1]]
         TSIVIPr[j, ] <- aa[[2]]
+
     }
     r <- matrix(nrow = ncol(Indic), ncol = nc)
     for (i in 1:ncol(Indic)) {
@@ -382,6 +438,7 @@ tsivipnoalea <- function(VIP, Y, Indic, nc = 2, graph = FALSE) {
     dimnames(Evol) <- list(1:nc, varnames)
     # Prendre la derniere ligne de Evol, i.e ce qui correspond a la derniere
     # composante
+
     tsivip <- Evol[nrow(Evol), ]
     names(tsivip) <- varnames
     
@@ -402,11 +459,12 @@ tsivipnoalea <- function(VIP, Y, Indic, nc = 2, graph = FALSE) {
 # @param nc number of components
 # @param Indic matrix computed by indic function
 # @return tsivip total indices for each input variable
-#  The non significant monomes are removed
+#  The non significant monomials are removed
 # from the tsivip calculation.
 
 
-tsivipalea <- function(Y, XIndic, nc, output = FALSE) {
+tsivipalea <- function(Y, XIndic, nc,
+                       na.miss, fast=FALSE, output = FALSE) {
     dataX.exp <- XIndic@dataX.exp
     Indic <- XIndic@Pindic@indic
     
@@ -422,7 +480,8 @@ tsivipalea <- function(Y, XIndic, nc, output = FALSE) {
     colnames(Indicalea) <- varnames
     Indicalea <- rbind(Indicalea, rep(0, ncol(Indicalea)))
     Indicalea[nrow(Indicalea), ncol(Indicalea)] <- 1
-    regpls <- regpls2(Y, Xalea, nc, output = output)
+    
+    regpls <- regpls2(Y, Xalea, nc, na.miss, fast=fast, output = output)
     VIP <- regpls$VIP
     VIP <- VIP[, ncol(VIP)]
     isivipalea <- isivip(VIP, Xalea)
@@ -453,7 +512,7 @@ tsivipalea <- function(Y, XIndic, nc, output = FALSE) {
 # nobs X 1 nc: number of components Internal function
 rlaz <- function(TT, Y, nc) {
     YY <- scale(Y)  # centered-reduced response variable
-    alpha <- 0.05  # alpha est fixe
+    alpha <- 0.05  # alpha is fixed
     nobs <- nrow(YY)
     stu <- qt(1 - alpha, nobs)
     res <- apply(TT, 1, function(T, Y, nc, nobs, stu) {
@@ -466,25 +525,26 @@ rlaz <- function(TT, Y, nc) {
             return(FALSE)
         }
     }, Y, nc, nobs, stu)
+    names(res) <- paste("c", 1:length(res), sep="")
     return(list(lazraq.signifcomponents = res))
 }  # end rlaz 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Calcul des indices individuels isivip
-# @title compute isivip individual sensitivity indices for each monome
+# @title compute isivip individual sensitivity indices for each monomial
 # @isivip
 # @param vecin VIP vector
 # @param dataX.exp inputs data.frame
-# @return isivip individual sensitivity indices for each monome
+# @return isivip individual sensitivity indices for each monomial
 
 isivip <- function(vecin, dataX.exp) {
+  
     sivip <- rep(0, ncol(dataX.exp))
     if (!is.null(colnames(dataX.exp)))
       names(sivip) <- colnames(dataX.exp)
     else
       names(sivip) <- paste("X", 1:ncol(dataX.exp))
-    
     for (i in 1:ncol(dataX.exp)) {
-        sivip[i] <- vecin[i] * vecin[i]/ncol(dataX.exp)
+        sivip[i] <- (vecin[i] * vecin[i])/ncol(dataX.exp)
     }
     return(sivip)
 }
@@ -497,18 +557,20 @@ isivip <- function(vecin, dataX.exp) {
 # @param nc number of components
 # @param graph=FALSE display graph
 # @return tsivip total indices for each input variable
-# When alea=TRUE, the non significant monomes are removed
+# When alea=TRUE, the non significant monomials are removed
 # from the tsivip calculation.
 # It is a fast version of function of sivipm, because reduced to the
 # case where only tsivip are required. Used in bootstrap.
 
-gosivip <- function(Y, XIndic, nc=2, graph = FALSE, alea = FALSE) {
+gosivip <- function(Y, XIndic, na.miss, nc=2, graph = FALSE, alea = FALSE,
+                    fast= FALSE) {
 
     dataX.exp <- XIndic@dataX.exp
     Indic <- XIndic@Pindic@indic
     if (!alea) 
         {
-          regpls <- regpls2(Y, dataX.exp, nc,  output=FALSE)
+          regpls <- regpls2(Y, dataX.exp, nc, na.miss=na.miss,
+                            fast=fast, output=FALSE)
           ret <- tsivipnoalea(regpls$VIP, Y,   Indic, nc, graph= graph)
 
         }  # end !alea
@@ -532,6 +594,7 @@ gosivip <- function(Y, XIndic, nc=2, graph = FALSE, alea = FALSE) {
 # @return tsivip percentile bootstrap confidence intervals
 
 sivipboot <- function(Y, XIndic, B, nc=2, graph=FALSE, alea=FALSE,
+                      fast=FALSE,
                       alpha = 0.05) {
     dataX.exp <- XIndic@dataX.exp
     Indic <- XIndic@Pindic@indic
@@ -539,7 +602,7 @@ sivipboot <- function(Y, XIndic, B, nc=2, graph=FALSE, alea=FALSE,
       boot <- matrix(nrow = B, ncol = ncol(Indic))
     else
       boot <- matrix(nrow = B, ncol = ncol(Indic)+1)
-    # dans le cas aleatoire, on rajoute une variable
+    # in the case where there is alea, we add a variable
     
     # MAXTRY: maximal number of X generation at each loop
     MAXTRY = 5
@@ -561,7 +624,9 @@ sivipboot <- function(Y, XIndic, B, nc=2, graph=FALSE, alea=FALSE,
         # End check scale
 
         XIndic@dataX.exp <- dataX.exp[T, ]
-        ressivipm <- gosivip(Y[T, ], XIndic, nc, alea=alea,
+        ressivipm <- gosivip(Y[T, ], XIndic, na.miss=NA,
+                             nc=nc, alea=alea,
+                             fast=fast,
                             graph = FALSE)$tsivip
           
         boot[b, ] <- ressivipm
@@ -589,5 +654,16 @@ sivipboot <- function(Y, XIndic, B, nc=2, graph=FALSE, alea=FALSE,
     return(IC)
 } # end sivipboot
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
+# Compute the PLS coefficents
+# In case it is useful
+# beta can be the natural beta or the centered-reducted ones
+calccoefPLS <- function(beta, Indic, nvar, nY) {
+  coefPLS <- matrix (NA, nrow=nvar, ncol=nY)
+  for (j in 1:nY) {
+    for(i in 1:nvar) {
+      a <- Indic[,i] * beta[,j]
+      coefPLS[i,j] <- sum(a*a)
+    }
+  }
+  return(coefPLS)
+} # end calccoefPLS 

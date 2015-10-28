@@ -24,14 +24,14 @@
 #--------------------------------------------
 # Class poly
 # SLOTS:
-# P: a list of length equal to the number of monomes.
+# P: a list of length equal to the number of monomials.
 #     Each component is a vector of length equal to the
-#     polynome degree: its contains the
-#     number of the variables in the monome
+#     polynomial degree: its contains the
+#     number of the variables in the monomial
 # indic: the indicatrice matrix. It is a matrix with as
-#        many rows as monomes and nvar columns.
+#        many rows as monomials and nvar columns.
 #       The element \code{(i, j)} is 1 when the variable \code{j}
-#        is in the monome, 0 otherwise.
+#        is in the monomial, 0 otherwise.
 # METHODS:
 # bind (or bind.poly), expand (or expand.poly), print, show, summary
 # CREATORS:
@@ -50,7 +50,7 @@ poly <- setClass("poly",
 	        is.list(P)  && is.matrix(indic) && is.numeric(indic)
              if (!retour)
                 return("P must be a numeric list and indic a numeric matrix")
-             # Length of each component of P= number of monomes
+             # Length of each component of P= number of monomials
              nvar <- ncol(indic)
              retour <- lapply(P, function(X, nvar) {
                return(  any(X<0) || any(X >nvar))
@@ -62,7 +62,7 @@ poly <- setClass("poly",
                return( (length(X) != degree)) }
                               , degree)
              if (any(unlist(retour)==TRUE))
-               return(paste("The length of all components in P must be equal to the polynome degree, i.e ", degree))
+               return(paste("The length of all components in P must be equal to the polynomial degree, i.e ", degree))
 #
 retour <- all(sapply(P[1:nvar], function(X) { a= (X>0); length(a[a==T]); })==1)
              if (!retour) {
@@ -77,10 +77,10 @@ retour <- all(sapply(P[1:nvar], function(X) { a= (X>0); length(a[a==T]); })==1)
 
 #--------------------------------------------
 #  Bind two objects of class "poly"
-# @title Bind two structures coding for polynome into a single one
+# @title Bind two structures coding for polynomial into a single one
 # @param p1 an object of class "poly"
 # @param p2 an object of class "poly"
-# @return  an object of class "poly" coding for the polynome catenation of the polys in argument
+# @return  an object of class "poly" coding for the polynomial catenation of the polys in argument
 #--------------------------------------------
   
 
@@ -99,7 +99,7 @@ stop(paste("bind: Bad argument ", argu, ": must be an object of class 'poly'"))
 
     
     if (!is.null(nvar) && (ncol(argu@indic)!=nvar))
-      stop(paste("bind: argument", iarg, "is invalid: all polynomes must have the same number of variables, i.e:", nvar))
+      stop(paste("bind: argument", iarg, "is invalid: all polynomials must have the same number of variables, i.e:", nvar))
     
       if (iarg==1) {
         P <- argu@P
@@ -110,15 +110,15 @@ stop(paste("bind: Bad argument ", argu, ": must be an object of class 'poly'"))
       }
 
   
-  # Set the polynome degree to the maximal degree
+  # Set the polynomial degree to the maximal degree
   degree <- max(unlist(lapply(P, length)))
   P <- lapply(P, function(X, degree) {
     z <- c(X, rep(0, (degree-length(X))))
     z
   },degree)
-#  cat("Polynome degree: ", degree, "\n")
+#  cat("Polynomial degree: ", degree, "\n")
 
- # Remove the duplicated monomes from P
+ # Remove the duplicated monomials from P
   Pz <- lapply(P, unname) # don't compare the variables names
   Pd <- duplicated(Pz)
   P <- P[!Pd]
@@ -128,7 +128,7 @@ stop(paste("bind: Bad argument ", argu, ": must be an object of class 'poly'"))
                 
   indic <- crindic(P, nvar)@indic
   colnames(indic) <- varnames
-# Remove the duplicated monomes from indic
+# Remove the duplicated monomials from indic
   if (any(Pd)) {
     indic <- indic[-which(Pd),, drop=FALSE]
   }
@@ -143,10 +143,13 @@ stop(paste("bind: Bad argument ", argu, ": must be an object of class 'poly'"))
 #--------------------------------------------
 # Method 'print':
 #--------------------------------------------
-print.poly <- function (x, ...) {
+print.poly <- function (x, all=FALSE, ...) {
+    # all=T : print of all the monomials. Otherwise, only the number
+    # of monomials.
+    if (all) {
   descr <- "" # description par nom de variables
   descrnum <- "" # description par no de variables
-
+  
   label <- colnames(x@indic)
   if (length(x@P) >0) {
   for (imon in 1:length(x@P)) {
@@ -183,21 +186,30 @@ print.poly <- function (x, ...) {
       }
   } # fin imon
 } else {
-  cat("Polynome unknown")
+  cat("Polynomial unknown")
 }
   
   cat(descr , "\n")
-  cat("Polynome description using variable numbers:\n")
+  cat("Polynomial description using variable numbers:\n")
   cat(descrnum , "\n")
 
 # ##     
-# ##              cat("*** Polynome list: ***\n")
+# ##              cat("*** Polynomial list: ***\n")
 # ##            print(x@P, ...)
 # ##            cat("*** Indicatrice matrix: ***\n")
 # ##            print(x@indic, ...)
-# ##            cat("Polynome degree: ", length(x@P[[1]]), "\n")
-# ##            cat("Number of monomes: ", length(x@P), "\n")
-# ##            cat("Number of variables: ", ncol(x@indic), "\n")
+}
+    if (length(x@P) >0) {
+            cat("Polynomial degree: ", length(x@P[[1]]), "\n")
+            cat("Number of monomials: ", length(x@P), "\n")
+          }
+    else {
+      cat("There is no polynomial description\n")
+    }
+    if (!is.null(x@indic) && any(!is.na(x@indic))) {
+            cat("Number of variables: ", ncol(x@indic), "\n")
+          }
+    
     return(invisible())
 } # end print.poly
                
@@ -217,13 +229,9 @@ print.poly <- function (x, ...) {
 #--------------------------------------------
 summary.poly <- function(object, ...) {
   if (length(object@P) >0 ) {
-  cat("Polynome degree: ", length(object@P[[1]]), "\n")
-           cat("Number of monomials: ", length(object@P), "\n")
-           cat("Number of variables: ", ncol(object@indic), "\n")
-  cat("Polynome description:\n")
-  print(object)
+      print.poly(object, all=TRUE)
 } else {
-  cat("Polynome unknown\n")
+  cat("Polynomial unknown\n")
 }
   return(invisible())             
          }
@@ -249,9 +257,9 @@ summary.poly <- function(object, ...) {
     if (!is.data.frame(dataX) && !is.matrix(dataX)) 
         stop("expand: Second argument must be a data.frame or a matrix")
     if (length(Pindic@P) ==0)
-        stop("expand: First argument is an unknown polynome\n")
+        stop("expand: First argument is an unknown polynomial\n")
     if (max(unlist(Pindic@P))>ncol(dataX)) 
-      stop("expand: the polynome cannot have values greater than the maximum number of variables in the data")
+      stop("expand: the polynomial cannot have values greater than the maximum number of variables in the data")
     P <- Pindic@P
     dataX.exp <- matrix(nrow = nrow(dataX), ncol = length(P))
     for (i in 1:length(P)) {
@@ -309,12 +317,13 @@ polyX <- setClass("polyX",
                   # default value
           # Function to check:
            validity = function(object) {
+             if (length(object@Pindic@P) >0) {
              Pindic=slot(object,"Pindic")
              dataX.exp=slot(object,"dataX.exp")
              retour=
                (ncol(dataX.exp) >= length(Pindic@P))
              if (!retour) {
-                stop("polyX creator: Polynome description have more monomials as expanded data columns")
+                stop("polyX creator: Polynomial description have more monomials as expanded data columns")
                 return(FALSE)
               }
              # Cannot have variables with one level
@@ -325,7 +334,8 @@ polyX <- setClass("polyX",
                 stop("polyX creator: Some X-inputs have only one value")
                return(FALSE)
               } 
-               
+
+           } # fin is.null
                         return(TRUE)
            }
           )
@@ -352,7 +362,7 @@ stop(paste("bind: Bad argument ", argu, ": must be an object of class 'polyX'"))
        }
        dataX.exp <- cbind(dataX.exp, argu@dataX.exp)
        ret <- bindtwopoly(Pindic, argu@Pindic)
-       # Oter les colonnes de dataX.exp qui correspondent aux monomes en double
+       # Oter les colonnes de dataX.exp qui correspondent aux monomials en double
        if (any(ret$Pd)) {
          dataX.exp <- dataX.exp[, -which(ret$Pd), drop=FALSE]
        }
@@ -376,14 +386,22 @@ setMethod("bind", signature(x="polyX"),
 #--------------------------------------------
 # Method 'print'
 #--------------------------------------------
-print.polyX <- function(x, ...) {
-  cat("Polynome description:\n")
+print.polyX <- function(x, all=FALSE, ...) {
+
+ 
   if (!is.null(x@Pindic))
-  print(x@Pindic)
+  print(x@Pindic, all)
   else
     cat("unknown")
 #  cat("Dimension of the expanded data-frame:\n")
 #  print(dim(x@dataX.exp))
+# Test if the polynomial description is given.
+  # If it is not given, the 'poly' object, Pindic, does not
+  # know the number of variables.
+  if (is.null(x@Pindic@indic) || all(is.na(x@Pindic@indic))) {
+            cat("Number of variables: ", ncol(x@dataX.exp), "\n")
+          }
+
   cat("Number of observations:", nrow(x@dataX.exp), "\n")
   return(invisible())
 }
@@ -403,8 +421,8 @@ setMethod("print", signature(x="polyX"),
 # Method 'summary'
 #--------------------------------------------
 summary.polyX <- function(object, ...) {
-            cat("Number of observations: ", nrow(object@dataX.exp), "\n")
              summary(object@Pindic)
+            cat("Number of observations: ", nrow(object@dataX.exp), "\n")
  return(invisible())              
          }
 
@@ -418,26 +436,21 @@ summary.polyX <- function(object, ...) {
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # @crpoly
 #  Build an object of class 'poly'
-# @title Build an object of class 'poly' (list coding for a multivariate polynome and indicatrice matrix)
-# @param nvar number of variables in the polynome
-# @param d  maximal degree of the variables  in the polynome
-# @param type type of the required polynome. Character string among:
-# "full": complete polynome with all terms
+# @title Build an object of class 'poly' (list coding for a multivariate polynomial and indicatrice matrix)
+# @param nvar number of variables in the polynomial
+# @param d  maximal degree of the variables  in the polynomial
+# @param type type of the required polynomial. Character string among:
+# "full": complete polynomial with all terms
 # "power": only quadratic terms (d=2), cubic (d=3), etc..
 # "interact":  only interactions terms of degree d (not included quadratic, cubic, ... terms)
 # @return   an object of class 'poly'
 crpoly <- function(nvar, d, type="full") {
 
-  # Build the polynome list
+  # Build the polynomial list
   switch(type,
          full = {
-    P <- NULL
-    Q <- polycomplet(nvar, d)
-    s <- nrow(Q)
-    for (i in 1:s) {
-        P[i] <- list(Q[i, ])
-    }
-    P <- P[-1]  # P est une liste; chaque elt est un vecteur de longueur d
+    P <- polynomecomplet(nvar, d)
+ # P est une liste; chaque elt est un vecteur de longueur <=d
   },
          
          power = { P= polysquares(nvar, d)},
@@ -457,10 +470,10 @@ crpoly <- function(nvar, d, type="full") {
 
 # Build the indicatrice matrix useful to calculate the TSIVIP
 # @title build the indicatrice matrix
-# @param P the list coding a multivariate polynome
+# @param P the list coding a multivariate polynomial
 # @param nvar number of variables in the model
 # @return an object of class 'poly'
-# Dimension:  number of monomes x nvar 
+# Dimension:  number of monomials x nvar 
 
 crindic <- function (P, nvar) {
   indic1 <- function(i, j, P) {
@@ -477,7 +490,7 @@ crindic <- function (P, nvar) {
         } else {
           # Verifier que les nos de variables dans P <= nvar
           if (any(sapply(P, function(x) any(x>nvar))))
-              stop("crindic: values in the polynome list greater than the number of variables") 
+              stop("crindic: values in the polynomial list greater than the number of variables") 
           
 indic <- matrix(nrow = length(P), ncol =  nvar)
     for (i in 1:nrow(indic)) {
@@ -495,11 +508,11 @@ lePoly <- poly(P=P, indic=indic)
 #--------------------------------------------
 # @crpolyX
 #  Build an object of class 'polyX'
-# @title Build an object of class 'polyX' (list coding for a multivariate polynome and indicatrice matrix+ expanded data)
+# @title Build an object of class 'polyX' (list coding for a multivariate polynomial and indicatrice matrix+ expanded data)
 # @param dataX data.frame (not expanded)
-# @param d  maximal degree of the variables  in the polynome
-# @param type type of the required polynome. Character string among:
-# "full": complete polynome with all terms
+# @param d  maximal degree of the variables  in the polynomial
+# @param type type of the required polynomial. Character string among:
+# "full": complete polynomial with all terms
 # "power": only quadratic terms (d=2), cubic (d=3), etc..
 # "interact":  only interactions terms of degree d (not included quadratic, cubic, ... terms)
 # @return   an object of class 'polyX'
@@ -514,12 +527,12 @@ crpolyX <- function( dataX,  d, type="full") {
 #--------------------------------------------
 # @crpolyXT
 #  Build an object of class 'polyX'
-# @title Build an object of class 'polyX' (list coding for a multivariate polynome and indicatrice matrix+ expanded data)
+# @title Build an object of class 'polyX' (list coding for a multivariate polynomial and indicatrice matrix+ expanded data)
 # @param dataXT data.frame ( expanded)
 # @param varnames names of the inputs ("raw" variables)
-# @param d  maximal degree of the variables  in the polynome
-# @param type type of the required polynome. Character string among:
-# "full": complete polynome with all terms
+# @param d  maximal degree of the variables  in the polynomial
+# @param type type of the required polynomial. Character string among:
+# "full": complete polynomial with all terms
 # "power": only quadratic terms (d=2), cubic (d=3), etc..
 # "interact":  only interactions terms of degree d (not included quadratic, cubic, ... terms)
 # @return   an object of class 'polyX'
@@ -573,7 +586,7 @@ setGeneric("takeoff",
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   
-# Build a list coding for a multivariate polynome which only includes
+# Build a list coding for a multivariate polynomial which only includes
 # interactions of degree d
 # Internal function
 polyinteract<- function(nvar, d) {
@@ -581,8 +594,8 @@ polyinteract<- function(nvar, d) {
     stop("polyinteract: degree should be greater than 1")
   
     P <- NULL
-  ret <- polycomplet(nvar, d)
-    # ret est une matrice
+  ret <- polynomecomplet(nvar, d)
+    # ret est une liste
   # Oter les squares
   otesq <- function(X) {
     if (all(X == X[1]))
@@ -590,7 +603,7 @@ polyinteract<- function(nvar, d) {
     else 
       return( X)
   }
-  retour <- apply(ret, 1, otesq)
+  retour <- lapply(ret,  otesq)
     # retour est une liste
   
     # Garder les interactions 
@@ -616,28 +629,8 @@ polyinteract<- function(nvar, d) {
     return(P)
   
 } # end polyinteract
-# ++++++++++++++++++++++++++++++++++++++++++++++++
-# Build a list coding for a multivariate complete polynome of degree d
-# Internal function
-polycomplet <- function(nvar, d) {
-#Construction d'une matrice decrivant un polynome multivarie complet.
-    A <- matrix(nrow = nvar + 1, ncol = d, rep(seq(0, nvar), d))
-    A <- as.data.frame(A)
-    A <- expand.grid(A)
- if (d>1) {
-    for (i in 1:(d - 1)) {
-        A <- A[A[, i] >= A[, i + 1], ]
-    }
-    A <- as.matrix(A)
-  } else {
-    A <- matrix(0:nvar, ncol=1)
-  }
-    dimnames(A) = list(NULL,NULL)
-
-    return(A)
-} # end polycomplet
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Build a list coding for a multivariate polynome which only includes
+# Build a list coding for a multivariate polynomial which only includes
 # squares (cubic, ...) terms
 # Internal function
 polysquares<- function(nvar, d) {

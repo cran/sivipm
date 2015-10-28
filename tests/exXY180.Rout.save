@@ -1,6 +1,6 @@
 
-R version 3.1.1 (2014-07-10) -- "Sock it to Me"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -20,6 +20,7 @@ Type 'q()' to quit R.
 > # 2 responses. It is exX18Y2, with transformed data
 > library("sivipm")
 Loading required package: seqinr
+Loading required package: ade4
 > 
 > # -------------------------------------
 > # READ DATA (transformed data)
@@ -75,17 +76,17 @@ Loading required package: seqinr
 [1] "TSIVIP without alea on the first response"
 > nc <- 21# idem que avant-derniere page du raptech 2012
 > nc <- 2 # plus rapide
-> res <- sivipm(Y180[,1], zz,nc)
+> res <- sivipm(as.matrix(Y180[,1], ncol=1), zz,nc)
 > print(res)
-$fo.isivip
-          V1           V2           V3           V4           V5           V6 
-1.169655e-04 3.170459e-03 1.146044e-03 3.239249e-03 5.326001e-04 5.283407e-05 
-          V7           V8           V9          V10          V11          V12 
-8.227426e-04 5.619456e-04 8.672693e-04 9.587501e-03 6.195093e-03 1.605999e-03 
-         V13          V14          V15          V16          V17          V18 
-5.201071e-02 2.675323e-03 8.987178e-03 2.623191e-03 1.657010e-02 4.977677e-03 
+fo.isivip 
+        ALTI         MACH       POWERS          EAI          CAP          YAW 
+0.0004159798 0.0027788630 0.0019362157 0.0023618638 0.0003880902 0.0003941822 
+        ROLL        PITCH          VIS           RH           TA        HBASE 
+0.0006028390 0.0005794923 0.0008899741 0.0086311840 0.0121604228 0.0014948659 
+        HOUR        MODEL       CLOUDS       IHAZE1       IHAZE2       IHAZE3 
+0.0384764857 0.0031700738 0.0130406531 0.0054257575 0.0232065532 0.0053059964 
 
-$tsivip
+tsivip 
        ALTI        MACH      POWERS         EAI         CAP         YAW 
 0.083319445 0.066190410 0.092635835 0.060196890 0.010544439 0.084238013 
        ROLL       PITCH         VIS          RH          TA       HBASE 
@@ -93,7 +94,7 @@ $tsivip
        HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
 0.405366044 0.028182504 0.158786821 0.037072451 0.096611570 0.039213904 
 
-$percentage
+percentage 
       HOUR         TA         RH     CLOUDS        VIS     IHAZE2     POWERS 
 22.8015350 10.0960526  9.2790705  8.9316392  6.7964872  5.4343281  5.2106960 
        YAW      PITCH       ALTI       MACH        EAI      HBASE     IHAZE3 
@@ -101,12 +102,13 @@ $percentage
     IHAZE1      MODEL        CAP       ROLL 
  2.0852975  1.5852447  0.5931168  0.5201380 
 
-$simca.signifcomponents
-   t1    t2 
- TRUE FALSE 
+simca.signifcomponents 
+      Y1   Q2T
+c1  TRUE  TRUE
+c2 FALSE FALSE
 
-$lazraq.signifcomponents
-  t1   t2 
+lazraq.signifcomponents 
+  c1   c2 
 TRUE TRUE 
 
 > # idem que avant-derniere page du raptech 2012
@@ -122,8 +124,8 @@ TRUE TRUE
 > 
 > zz=vect2polyX(X,Pexp)
 > res2 <- sivipm(Y[,1], zz, nc)
-> res$fo.isivip <- res$fo.isivip[1:nvar]
-> names(res2$fo.isivip) = names(res$fo.isivip)
+> res@fo.isivip <- res@fo.isivip[1:nvar]
+> names(res2@fo.isivip) = names(res@fo.isivip)
 > print(all.equal(res, res2))
 [1] TRUE
 > 
@@ -131,4 +133,4 @@ TRUE TRUE
 > 
 > proc.time()
    user  system elapsed 
-  2.436   0.057   2.515 
+  1.462   0.102   1.556 

@@ -19,6 +19,7 @@ The  significant components are calculated by the SIMCA software rule
 The confidence
 intervals for the total sensitivity indices are determined by
 the bootstrap method.
+A fast algorithm is implemented which allows big datasets analysis.
 }
 \references{
   \itemize{
@@ -41,6 +42,11 @@ INRA, UR1404, F-78350 Jouy-en-Josas, France.
   The PLS multivariate regression model: testing the significance of successive PLS components.
   Journal of Chemometrics.
   Vol. 15(6), pp 523-536.
+  \item
+  Lazraq, A. and Cléroux, R. and Gauchi, J.-P. 2003.
+  Selecting both latent and explanatory variables in the PLS1 regression model. Chemometrics and Intelligent Laboratory Systems, Vol. 66(2),
+  pp 117-126.
+  Elsevier.         doi:10.1016/S0169-7439(03)00027-3.
   \item
   SIMCA Software.
 \url{http://www.umetrics.com/products/simca}.

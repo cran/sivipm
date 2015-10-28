@@ -1,6 +1,6 @@
 \name{vect2polyX}
 \alias{vect2polyX}
-\title{Create a polyX Object from  Polynomial Description}
+\title{Create  polyX Object from  Polynomial Description}
 \description{Create an object of class \code{\linkS4class{polyX}}
   from  a dataset of X-inputs and a vector that
   describes the polynomial.}

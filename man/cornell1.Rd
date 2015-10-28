@@ -2,7 +2,7 @@
 \alias{cornell1}
 \docType{data}
 \title{
-Motor Octane Number Measurements
+Motor Octane Number Measurements with Missing Values
 }
 \description{
 This dataset is the \code{\link{cornell0}} dataset where missing values have

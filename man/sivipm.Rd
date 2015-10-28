@@ -3,7 +3,7 @@
 \title{ Sensitivity Indices }
 \usage{sivipm(Y,  XIndic,
         nc=2,  options= c("fo.isivip", "tsivip", "simca", "lazraq"),
-        graph = FALSE, alea = FALSE,
+        graph = FALSE, alea = FALSE, fast = FALSE,
         output=NULL)}
 \description{Compute total and individual sensitivity indices, 
  significant components and auxiliary results.}
@@ -32,7 +32,10 @@
 	   \code{options} includes \code{tsivip}.
 	   Then, the non significant monomials are excluded from the
 	   total
-sensitivity indices calculation.}
+	   sensitivity indices calculation.}
+	 \item{fast}{ If TRUE,  \code{Q2} and relative results
+	   are calculated from  the Miller's formulae more adapted to
+	   big datasets.} 
 	 \item{output}{If non NULL, additional results are returned
 	   in a  component named \code{output}. 
 	   Character vector, which valid values are:
@@ -42,16 +45,20 @@ sensitivity indices calculation.}
 	       \code{betaNat0}}
 	     \item{\code{VIP}}{ to return \code{VIP} and
 	       \code{VIPind}}
-	     \item{\code{RSS}}{ to return \code{RSS}}
-	     \item{\code{PRESS}}{ to return \code{PRESS}}
-	     \item{\code{Q2}}{ to return \code{Q2} and
+%	     \item{\code{RSS}}{ to return \code{RSS}}
+%	     \item{\code{PRESS}}{ to return \code{PRESS}}
+	     \item{\code{Q2}}{ to return \code{Q2}, \code{Q2ckh} and
 	       \code{Q2cum}}
 	     \item{\code{PLS}}{ to return PLS results:
 		 \code{mweights}, \code{weights}, \code{x.scores},
 		 \code{x.loadings}, \code{y.scores},
 		 \code{y.loadings}, \code{cor.tx}, \code{cor.ty},
 		 \code{expvar}, \code{X.hat}, \code{Y.hat}
-	     } } See "Value".
+	       } } See "Value".\cr
+	     It is advised to first determine the number of
+	     significant components, by setting the options
+	     \code{simca} or \code{lazraq}, before asking for
+	     additional results.
 	   }
 	   }
 	   \details{
@@ -60,7 +67,8 @@ sensitivity indices calculation.}
   When the option \code{simca} or \code{lazraq}
   is set,  the significant components
   are computed   by the SIMCA software rule, or,
-  by the Lazraq and Cléroux inferential test, respectively.
+  by the Lazraq and Cléroux inferential test, at confidence level
+  0.95, respectively.
  The option \code{simca} is ignored if there are
  missing values. The option \code{lazraq} is ignored if there are
  missing values and more than one response variables.
@@ -70,6 +78,8 @@ the non significant monomials are those for which
 the individual sensitivity indices is less or equal than
 the one of the  random variable. These non significant monomials
 are excluded from the  total sensitivity indices calculation.
+\item
+To analyze big datasets, the option \code{fast} is advised.
 }
  }
 \note{
@@ -78,7 +88,8 @@ are excluded from the  total sensitivity indices calculation.
  and
  \code{isivip} are the generalized individual sensitivity
   indices (GISIVIP). }  
-\value{A list with components,
+\value{An object of class \code{\linkS4class{sivip}},
+  whose slots are:
  \item{\code{fo.isivip}}{When \code{options} includes \code{fo.isivip},
   the first order individual sensitivity indices.
  }
@@ -96,10 +107,13 @@ are excluded from the  total sensitivity indices calculation.
 	 and the outputs.}
        
  \item{\code{simca.signifcomponents}}{When  \code{options} includes \code{simca},
-   the significant components calculated by the SIMCA
-   software rule. Logical
-   vector of length \code{nc} with
- TRUE for the components where the test is positive at 95\% level, FALSE otherwise.
+   the significant components calculated by the S. Wold's rule
+   (SIMCA software rule). Logical matrix with \code{nc} rows
+   and as many columns as response variables plus one.
+   Values are
+ TRUE for the components where the test is positive at 95\% level, FALSE
+   otherwise. The last column is the test applied to the Q2T (Q2
+   cumulated on the response variables).
  }
   \item{\code{lazraq.signifcomponents}}{When  \code{options} includes \code{simca},
    the significant components calculated by the Lazraq and Cléroux inferential test. Logical
@@ -124,14 +138,16 @@ are excluded from the  total sensitivity indices calculation.
    \item  \code{VIP} Matrix of \code{nc} columns and as many rows as monomials.
    \item  \code{VIPind}  Matrix with as many rows as response variables and
  as many columns as monomials. 
-   \item  \code{RSS} Matrix  with as many columns as response variables
-   and \code{nc} +1 rows.
-   \item  \code{PRESS} Matrix  as many columns as response variables
-    and \code{nc} rows.
-     \item  \code{Q2} Matrix  with \code{nc} rows and
-   one more column as response variables. The last one is \code{Q2T}.
-   \item  \code{Q2cum} Vector of length
-   equal to \code{nc}.
+%     \item  \code{RSS} Matrix  with as many columns as response variables
+%     and \code{nc} +1 rows.
+%     \item  \code{PRESS} Matrix  with as many columns as response variables
+%      and \code{nc} rows.
+     \item  \code{Q2} Matrix  with  as many columns as response
+   variables +1 and \code{nc} rows. The last column is \code{Q2T}.
+     \item  \code{Q2ckh} Matrix  with as many columns as response
+     variables
+     and \code{nc} rows (Q2 cumulated on the components).      
+   \item  \code{Q2cum}, \code{Q2cum.percent} Matrix  with one column and  \code{nc} rows.
 
 	    \item \code{PLS} PLS results. The dimension of the
 	    components are indicated below in brackets. \code{nmono} denotes the number of monomials, \code{ny}, the number of response variables and \code{nobs}
@@ -157,29 +173,12 @@ Y <- as.data.frame( cornell0[,8]) # response variable
 # Creation of the polynomial:
 P <- vect2polyX(X, c("1", "2", "3", "3*3*3"))
 # Compute total sensitivity indices:
-sivipm(Y, P, options=c("tsivip"))
-
-}
-\references{
-  \itemize{ 
-    \item Gauchi, J.-P. 2015.
-      A practical method of global sensitivity analysis
-under constraints.
-Rapport technique 2015-1.
-INRA, UR1404, F-78350 Jouy-en-Josas, France.
-
-\item  Gauchi, J.-P. 2012.
-    Global Sensitivity Analysis: The SIVIP method (SAS/IML language). 
-  Rapport technique 2012-3. 
-  INRA, UR1404, F-78350 Jouy-en-Josas, France.
-
-  \item Lazraq, A. and Cléroux, R. 2001.
-  The PLS multivariate regression model: testing the significance of successive PLS components.
-  Journal of Chemometrics.
-  Vol. 15(6), pp 523-536.
-
-  \item   
-  SIMCA Software. \url{http://www.umetrics.com/products/simca}
-}
+A <- sivipm(Y, P, options=c("tsivip"))
+# See the names of the returned components
+getNames(A)
+# The main results
+summary(A)
+# Calculation by using the fast algorithm:
+B <- sivipm(Y, P, fast = TRUE, options=c("tsivip"))
 }
 

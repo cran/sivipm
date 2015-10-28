@@ -22,7 +22,7 @@
 #
 ###################################################################
 # Build an object of class 'poly' from a character vector
-# whose each element codes a monome; in this vector, the inputs are either coded
+# whose each element codes a monomial; in this vector, the inputs are either coded
 # by their names (as they are in the colnames of the dataset, or provided - in
 # case of transformed data), or by their number
 
@@ -105,7 +105,7 @@ decodlemono <- function(unmono, d, varnames) {
 }  # end decodlemono
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Build an object of class 'polyX' from raw data and
-# a character vector whose each element codes a monome; in this vector, the
+# a character vector whose each element codes a monomial; in this vector, the
 # inputs are either coded by their names (as they are in the colnames of the
 # dataset, or provided - in case of transformed data), or by their number
 
@@ -117,7 +117,7 @@ vect2polyX <- function(dataX, monomials) {
 }  # end vect2polyX
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Build an object of class 'polyX' from transformed data and
-# a character vector whose each element codes a monome; in this vector, the
+# a character vector whose each element codes a monomial; in this vector, the
 # inputs are either coded by their names (as they are in the colnames of the
 # dataset, or provided - in case of transformed data), or by their number
 vect2polyXT <- function(varnames, dataXT, monomials) {

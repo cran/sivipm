@@ -27,7 +27,13 @@
    Objects from this class are usually not intended to
    be accessed directly by the end-user. }
  \section{Methods}{
-    \code{summary, print, or show}{: display functions.}
+   \code{summary, print, or show}{: display functions.
+     \code{print} has an optional argument, \code{all=FALSE}.
+     When it is
+     set to TRUE, all the monomes are displayed. Otherwise, only
+     the polynomial
+     degree, the number of monomials and the number of variables.
+     }
 }
 \keyword{classes}
  

@@ -25,6 +25,9 @@ P1 <- vect2polyX(XCornell0, monomes)
 # Creation of an object of class 'polyX'
 PP3 <- crpolyX(XCornell0,2, type="full")
 print(PP3)
+# complete polynome degree 3
+PP4 <- crpolyX(XCornell0,3, type="full")
+print(PP4)
 # -------------------------------------
 # Illustration of  methods of class 'polyX'
  summary(P1)
@@ -35,14 +38,20 @@ print(z2)
 
 # -------------------------------------
 # CALCULATIONS
-nc=2
+nc <- 2
 
 print("TSIVIP without alea")
 A <- sivipm(YCornell0, P1,  nc, options="tsivip")
+getNames(A)
 print(A)
 # compute tsivip Y by Y: here same results, because there is only one Y
 print(apply(YCornell0, 2, sivipm, P1, nc))
-
+print("TSIVIP without alea, full polynome degree 2")
+A <- sivipm(YCornell0, PP3,  nc, options=c("tsivip", "fo.isivip", "simca"," lazraq"))
+print(A)
+print("TSIVIP without alea, full polynome degree 3")
+A <- sivipm(YCornell0, PP4,  nc, options=c("tsivip", "fo.isivip", "simca"," lazraq"))
+print(A)
 
 print("TSIVIP with alea")
 set.seed(15)
@@ -67,7 +76,12 @@ print(sivipm(YCornell0, P1,  nc))
 
 print("BOOTSTRAP")
 B=2
-print(sivipboot(YCornell0,P1, B , nc, alpha=0.05))
+set.seed(15)
+A <- sivipboot(YCornell0,P1, B , nc, alpha=0.05)
+print(A)
 
+set.seed(15)
+B <- sivipboot(YCornell0,P1, B , nc, fast=T,  alpha=0.05)
+print(all.equal(A,B))
 
 

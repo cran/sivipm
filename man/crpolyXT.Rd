@@ -1,7 +1,7 @@
 \name{crpolyXT}
 \alias{crpolyXT}
-\title{Create a \code{polyX} Object from
- a  Standard  Polynomial }
+\title{Create polyX Object from
+  Standard  Polynomial, Transformed Inputs}
 \description{Create an object of class \code{\linkS4class{polyX}}
    from transformed X-inputs and  standard  polynomial.}
 \usage{

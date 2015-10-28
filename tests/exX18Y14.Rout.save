@@ -1,6 +1,6 @@
 
-R version 3.1.1 (2014-07-10) -- "Sock it to Me"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -18,6 +18,7 @@ Type 'q()' to quit R.
 > # Example ex18Y14: the same 18 inputs as in X18Y2 but with 14 responses
 > library("sivipm")
 Loading required package: seqinr
+Loading required package: ade4
 > 
 > # -------------------------------------
 > # READ DATA 
@@ -34,22 +35,31 @@ Loading required package: seqinr
 > # CALCULATIONS WITH POLYNOME DESCRIPTION NOT REQUIRED
 > nc=2
 > b <- new("polyX", dataX.exp=X)
-> print( sivipm(Y, b, nc=nc))
-$fo.isivip
-         V1 
-0.003294188 
-
-$simca.signifcomponents
-   t1    t2 
- TRUE FALSE 
-
-$lazraq.signifcomponents
-  t1   t2 
-TRUE TRUE 
-
+> A <-  sivipm(Y, b, nc=nc)
 Warning message:
 In sivipm(Y, b, nc = nc) :
-  sivipm : option tsivip ignored because there is no polynome description
+  sivipm : option tsivip ignored because there is no polynomial description
+> print( A)
+fo.isivip 
+         V1          V2          V3          V4          V5          V6 
+0.004792694 0.032170481 0.009610074 0.034355202 0.008538489 0.003896552 
+         V7          V8          V9         V10         V11         V12 
+0.011293923 0.003139617 0.011171663 0.059926529 0.070243988 0.015072844 
+        V13         V14         V15         V16         V17         V18 
+0.370753498 0.019664093 0.082385433 0.035343384 0.178526426 0.049115109 
+
+simca.signifcomponents 
+    V19   V20   V21   V22   V23   V24   V25   V26   V27   V28   V29   V30  V31
+c1 TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE TRUE
+c2 TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE TRUE
+     V32   Q2T
+c1  TRUE  TRUE
+c2 FALSE FALSE
+
+lazraq.signifcomponents 
+  c1   c2 
+TRUE TRUE 
+
 > 
 > # -------------------------------------
 > #  MONOME DESCRIPTION: monomes coded by the inputs numbers
@@ -86,15 +96,15 @@ In sivipm(Y, b, nc = nc) :
 > # CALCULATIONS
 > res1 <- sivipm(Y[,1], zz,nc)
 > print(res1)
-$fo.isivip
+fo.isivip 
           V1           V2           V3           V4           V5           V6 
-0.0019156004 0.0027393964 0.0026641773 0.0056249263 0.0009537943 0.0002942515 
+0.0016870719 0.0023960921 0.0024994435 0.0049649430 0.0010976140 0.0002561018 
           V7           V8           V9          V10          V11          V12 
-0.0011321985 0.0011983076 0.0012690069 0.0067901508 0.0114744646 0.0018067287 
+0.0012989655 0.0011880996 0.0010924755 0.0130095173 0.0109610311 0.0030012959 
          V13          V14          V15          V16          V17          V18 
-0.0406175015 0.0018040683 0.0077584258 0.0042396678 0.0237315105 0.0065199238 
+0.0341644105 0.0021995356 0.0081556112 0.0041859590 0.0223305564 0.0059387660 
 
-$tsivip
+tsivip 
         V1         V2         V3         V4         V5         V6         V7 
 0.08987754 0.07157970 0.09358609 0.07956209 0.02063671 0.08526170 0.01890856 
         V8         V9        V10        V11        V12        V13        V14 
@@ -102,7 +112,7 @@ $tsivip
        V15        V16        V17        V18 
 0.10130698 0.02529825 0.11673339 0.02819176 
 
-$percentage
+percentage 
       V13       V10       V11        V9       V17       V15        V3        V1 
 19.844497 12.548011  9.541205  6.750087  6.584875  5.714678  5.279147  5.069949 
        V8        V6        V4        V2       V12       V18       V16       V14 
@@ -110,15 +120,16 @@ $percentage
        V5        V7 
  1.164107  1.066623 
 
-$simca.signifcomponents
-   t1    t2 
- TRUE FALSE 
+simca.signifcomponents 
+      Y1   Q2T
+c1  TRUE  TRUE
+c2 FALSE FALSE
 
-$lazraq.signifcomponents
-  t1   t2 
+lazraq.signifcomponents 
+  c1   c2 
 TRUE TRUE 
 
 > 
 > proc.time()
    user  system elapsed 
-  2.573   0.064   2.679 
+  1.357   0.116   1.464 

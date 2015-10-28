@@ -44,6 +44,6 @@ Y = XY180[,(nX+1):datancol]
 Pext <- vect2polyXT(varnamesX18, dataexp, monomes)
 res2 <- sivipm(Y[,1], Pext,nc)
 print(res2)
-res2$fo.isivip <- res2$fo.isivip[1:18]
-names(res2$fo.isivip) = names(res1$fo.isivip)
+res2@fo.isivip <- res2@fo.isivip[1:18]
+names(res2@fo.isivip) = names(res1@fo.isivip)
 print(all.equal(res1, res2))

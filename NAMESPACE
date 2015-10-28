@@ -1,3 +1,4 @@
+useDynLib(sivipm, boucle)
 export(
 crpolyX,crpolyXT, factorsplit,
 sivipm, 
@@ -5,9 +6,11 @@ vect2polyX, vect2polyXT,
  sivipboot, 
  summary.poly,  print.poly,
  bind.polyX,   summary.polyX,  print.polyX, takeoff.polyX)
-exportClasses(poly, polyX)
-exportMethods(bind, takeoff)
-import(methods, seqinr)
+exportClasses(poly, polyX, sivip)
+exportMethods(bind, takeoff, getNames)
+import(methods, seqinr, stats)
+importFrom("graphics", "axis", "barplot", "boxplot", "matplot", "par")
+importFrom("utils", "combn")
 S3method(print, polyX)
 S3method(print, poly)
 S3method(summary, polyX)

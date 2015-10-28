@@ -16,7 +16,8 @@ Y = X18Y14[,(nX+1):datancol]
 # CALCULATIONS WITH POLYNOME DESCRIPTION NOT REQUIRED
 nc=2
 b <- new("polyX", dataX.exp=X)
-print( sivipm(Y, b, nc=nc))
+A <-  sivipm(Y, b, nc=nc)
+print( A)
 
 # -------------------------------------
 #  MONOME DESCRIPTION: monomes coded by the inputs numbers

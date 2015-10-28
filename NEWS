@@ -1,4 +1,40 @@
 =============
+Release 1.1-2
+Date: 2015-10-28
+=============
+* file NAMESPACE: add import of hidden packages
+
+=============
+Release 1.1-1
+Date: 2015-10-27
+=============
+* Add the option 'fast' to 'sivipm' and 'sivipboot': a new
+algorithm is implemented, more adapted to big datasets. 
+* When the Q2 are required, the Q2ckh are also output.
+* The significant components determined by simca rule,
+are calculated from the Q2 of each response variable, in addition to
+the Q2T. Formerly, from the Q2T only.
+* It is checked that the number of components is not greater 
+than the number of monomials.
+* Creation of the class 'sivip', container of the result
+of the 'sivipm' function. Its method 'print', thanks to its option
+'all', allows to limit the amount of printed components.
+Its method 'getNames' displays the names of the non-null slots.
+* Fix a bug in the computation of fo.isivip:
+they were calculated for the first component instead of the last one.
+* Fix a bug in sivipm : when no polynomials description is given,
+only one variable was taken into account. 
+
+=============
+Release 1.1-0
+Date: 2015-09-23
+=============
+* New algorithm to generate full polynomials.
+* Add an option 'all=FALSE' to the 'print' method.
+By default, the monomials of a polynomial are not displayed. 
+Only their number.
+
+=============
 Release 1.0-0
 Date: 2015-04-15
 =============

@@ -1,6 +1,6 @@
 
-R version 3.1.1 (2014-07-10) -- "Sock it to Me"
-Copyright (C) 2014 The R Foundation for Statistical Computing
+R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
+Copyright (C) 2015 The R Foundation for Statistical Computing
 Platform: x86_64-unknown-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -21,6 +21,7 @@ Type 'q()' to quit R.
 > #
 > library("sivipm")
 Loading required package: seqinr
+Loading required package: ade4
 > 
 > # -------------------------------------
 > # READ DATA (non expanded data)
@@ -47,25 +48,25 @@ Loading required package: seqinr
 [1] "TSIVIP with alea"
 > set.seed(15)
 > print(sivipm(YCornell1, P1, nc,  alea=TRUE))
-$fo.isivip
+fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
-1.056252e-01 7.559840e-06 9.136578e-02 7.317271e-02 3.982061e-02 1.202217e-01 
+ 0.102323569  0.005862847  0.087701421  0.073815728  0.038383685  0.119402850 
     Gasoline 
-6.863165e-02 
+ 0.066067328 
 
-$tsivip
+tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
   0.19968131   0.09652619   0.25941727   0.22464407   0.07945418   0.23774033 
     Gasoline 
   0.13780384 
 
-$percentage
+percentage 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
    21.000904    19.246065    18.185869    16.165030    11.155792     7.814195 
      Polymer 
     6.432146 
 
-$monosignif
+monosignif 
               Distillation                   Reformat 
                       TRUE                      FALSE 
                   NaphthaT                   NaphthaC 
@@ -81,12 +82,12 @@ $monosignif
            Alkylat*Alkylat Gasoline*Gasoline*Gasoline 
                       TRUE                       TRUE 
 
-$correlalea
+correlalea 
              Y
 [1,] 0.1442915
 
-$lazraq.signifcomponents
-   t1    t2 
+lazraq.signifcomponents 
+   c1    c2 
  TRUE FALSE 
 
 Warning message:
@@ -97,11 +98,11 @@ In sivipm(YCornell1, P1, nc, alea = TRUE) :
 [1] "ISIVIP "
 > A <- sivipm(YCornell1, P1, nc, options="fo.isivip")
 > print(A)
-$fo.isivip
+fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
-1.056252e-01 7.559840e-06 9.136578e-02 7.317271e-02 3.982061e-02 1.202217e-01 
+ 0.102323569  0.005862847  0.087701421  0.073815728  0.038383685  0.119402850 
     Gasoline 
-6.863165e-02 
+ 0.066067328 
 
 > 
 > 
@@ -125,4 +126,4 @@ Gasoline     0.12188605 0.1811747
 > 
 > proc.time()
    user  system elapsed 
-  0.531   0.044   0.613 
+  0.652   0.066   0.711 

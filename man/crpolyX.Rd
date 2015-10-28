@@ -1,7 +1,7 @@
 \name{crpolyX}
 \alias{crpolyX}
-\title{Create a \code{polyX} Object from
-   a Standard Polynomial }
+\title{Create polyX Object from
+    Standard Polynomial }
 \description{Create an object of class \code{\linkS4class{polyX}}
     from  raw dataset of  X-inputs and  standard polynomial.}
 \usage{
