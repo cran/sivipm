@@ -1,7 +1,7 @@
 
 ###################################################################
 # sivipm R package
-# Copyright INRA 2015
+# Copyright INRA 2016
 # INRA, UR1404, Research Unit MaIAGE
 # F78352 Jouy-en-Josas, France.
 #

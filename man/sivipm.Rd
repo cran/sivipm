@@ -33,7 +33,7 @@
 	   Then, the non significant monomials are excluded from the
 	   total
 	   sensitivity indices calculation.}
-	 \item{fast}{ If TRUE,  \code{Q2} and relative results
+	 \item{fast}{ If TRUE,  auxiliary results
 	   are calculated from  the Miller's formulae more adapted to
 	   big datasets.} 
 	 \item{output}{If non NULL, additional results are returned
@@ -47,7 +47,7 @@
 	       \code{VIPind}}
 %	     \item{\code{RSS}}{ to return \code{RSS}}
 %	     \item{\code{PRESS}}{ to return \code{PRESS}}
-	     \item{\code{Q2}}{ to return \code{Q2}, \code{Q2ckh} and
+	     \item{\code{Q2}}{ to return \code{Q2}  and
 	       \code{Q2cum}}
 	     \item{\code{PLS}}{ to return PLS results:
 		 \code{mweights}, \code{weights}, \code{x.scores},
@@ -90,14 +90,15 @@ To analyze big datasets, the option \code{fast} is advised.
   indices (GISIVIP). }  
 \value{An object of class \code{\linkS4class{sivip}},
   whose slots are:
- \item{\code{fo.isivip}}{When \code{options} includes \code{fo.isivip},
+ \item{\code{fo.isivip} and \code{fo.isivip.percent}}{When
+   \code{options} includes \code{fo.isivip},  values and
+   sorted percentages of
   the first order individual sensitivity indices.
  }
-\item{\code{tsivip}}{When \code{options} includes \code{tsivip},
+\item{\code{tsivip} and \code{tsivip.percent}}{When \code{options}
+  includes \code{tsivip}, values and sorted  percentages
+   of the
          total sensitivity indices for each input variable.}
-       \item{\code{percent}}{When \code{options} includes \code{tsivip},
-	 percentages of the total sensitivity indices.}
-
        \item{\code{monosignif}}{When \code{alea} is TRUE,
 	 and \code{options} includes \code{tsivip},
 	 logical vector which indicates the significant monomials.}
@@ -109,11 +110,10 @@ To analyze big datasets, the option \code{fast} is advised.
  \item{\code{simca.signifcomponents}}{When  \code{options} includes \code{simca},
    the significant components calculated by the S. Wold's rule
    (SIMCA software rule). Logical matrix with \code{nc} rows
-   and as many columns as response variables plus one.
+   and as many columns as response variables.
    Values are
  TRUE for the components where the test is positive at 95\% level, FALSE
-   otherwise. The last column is the test applied to the Q2T (Q2
-   cumulated on the response variables).
+   otherwise.
  }
   \item{\code{lazraq.signifcomponents}}{When  \code{options} includes \code{simca},
    the significant components calculated by the Lazraq and Cléroux inferential test. Logical
@@ -121,7 +121,7 @@ To analyze big datasets, the option \code{fast} is advised.
  TRUE for the components where the test is positive at 95\% level, FALSE otherwise. }
  \item{\code{output}}{ When \code{output} is not NULL, a list with
    additional results, whose components depend on  \code{output}
-   value. 
+   option. 
    \itemize{
      \item
      \code{isivip} Individual sensitivity indices for each
@@ -143,12 +143,9 @@ To analyze big datasets, the option \code{fast} is advised.
 %     \item  \code{PRESS} Matrix  with as many columns as response variables
 %      and \code{nc} rows.
      \item  \code{Q2} Matrix  with  as many columns as response
-   variables +1 and \code{nc} rows. The last column is \code{Q2T}.
-     \item  \code{Q2ckh} Matrix  with as many columns as response
-     variables
-     and \code{nc} rows (Q2 cumulated on the components).      
-   \item  \code{Q2cum}, \code{Q2cum.percent} Matrix  with one column and  \code{nc} rows.
-
+   variables  and \code{nc} rows. 
+   \item  \code{Q2cum} Matrix  with  as many columns as response
+     variables + one column and  \code{nc} rows.
 	    \item \code{PLS} PLS results. The dimension of the
 	    components are indicated below in brackets. \code{nmono} denotes the number of monomials, \code{ny}, the number of response variables and \code{nobs}
 the number of observations. 
@@ -178,6 +175,8 @@ A <- sivipm(Y, P, options=c("tsivip"))
 getNames(A)
 # The main results
 summary(A)
+# All the results
+print(A, all=TRUE)
 # Calculation by using the fast algorithm:
 B <- sivipm(Y, P, fast = TRUE, options=c("tsivip"))
 }

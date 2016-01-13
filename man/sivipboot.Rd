@@ -20,7 +20,7 @@
 \item{graph}{If TRUE, boxplot display.}
 \item{alea}{ If TRUE, an uniform random variable is included
   in the analysis (see \code{\link{sivipm}}).}
-\item{fast}{ If TRUE,  \code{Q2} and dependent results
+\item{fast}{ If TRUE,  auxiliary results
 	   are calculated from  the Miller's formulae more adapted to
 	   big datasets.} 
 	 \item{alpha}{ Level of the bootstrap confidence intervals.}}

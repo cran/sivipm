@@ -1,6 +1,6 @@
 ###################################################################
 # sivipm R package
-# Copyright INRA 2015
+# Copyright INRA 2016
 # INRA, UR1404, Research Unit MaIAGE
 # F78352 Jouy-en-Josas, France.
 #
@@ -92,9 +92,14 @@ regpls2 <- function(Y, dataX.exp, nc = 2,
             cor.tx <- matrix(nrow = nc, ncol = p)
             for (j in 1:p) {
                 i.exist <- which(complete.cases(X[, j]))
+                #  1st solution 
                 for (k in 1:nc) {
                   cor.tx[k, j] <- cor(ret$T[k, i.exist], X[i.exist, j])
                 }
+
+                 # 2nd solution, not more quick
+#                cor.tx[,j] <- apply(ret$T, 1, function(T,X,ind) cor(T[ind], X), X[i.exist, j], i.exist)
+                
             }
             R2x <- cor.tx^2
             Rdx <- rowMeans(R2x)
@@ -104,9 +109,13 @@ regpls2 <- function(Y, dataX.exp, nc = 2,
     cor.ty <- matrix(nrow = nc, ncol = q)
     for (j in 1:q) {
         i.exist <- which(complete.cases(YY[, j]))
+        # 1st solution 
         for (k in 1:nc) {
             cor.ty[k, j] <- cor(ret$T[k, i.exist], YY[i.exist, j])
         }
+
+        # 2nd solution, not more quick
+#        cor.ty[,j] <- apply(ret$T, 1, function(X,YY,ind) cor(X[ind], YY), YY[i.exist, j], i.exist)
     }
 
  
@@ -192,8 +201,7 @@ regpls2 <- function(Y, dataX.exp, nc = 2,
                     
                  }
                   
-                  Q2T <- rowMeans(ret$Q2)
-                }  # end (!na.miss)
+                 }  # end (!na.miss)
             # noms
             
             # The dimnames
@@ -235,14 +243,14 @@ regpls2 <- function(Y, dataX.exp, nc = 2,
                 retour$PRESS <- ret$PRESS
 		dimnames(retour$PRESS) <- list(labnc,  colnames(YY))
                  colnames(ret$Q2) <- colnames(YY)
-                retour$Q2 <- cbind(ret$Q2, Q2T)
+                retour$Q2 <- ret$Q2
                 # Q2 less than zero are set to zero
                 retour$Q2[retour$Q2<0] <- 0
                 rownames(retour$Q2) <- labnc
-                 retour$Q2ckh <- Q2ckh
-                 dimnames(retour$Q2ckh) <- dimnames(retour$PRESS)
-                retour$Q2cum <- Q2cum
-                 names(retour$Q2cum) <- labnc
+                 retour$Q2cum <- cbind(Q2ckh,Q2cum)
+                colQ2 <- paste("Q2-", colnames(retour$PRESS), sep="")
+                 colnames(retour$Q2cum) <- c(colQ2, "total-Q2cum")
+                  rownames(retour$Q2cum) <- labnc
 		colnames(retour$expvar) <- labnc
             }
             return(retour)

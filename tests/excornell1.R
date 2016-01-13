@@ -25,13 +25,19 @@ P1 <- vect2polyX(XCornell1, monomes)
 
 
 nc=2
-print("TSIVIP with alea")
+print(" with alea")
 set.seed(15)
-print(sivipm(YCornell1, P1, nc,  alea=TRUE))
+A <- sivipm(YCornell1, P1, nc,  alea=TRUE)
+print(A, all=TRUE)
 
 print("ISIVIP ")
 A <- sivipm(YCornell1, P1, nc, options="fo.isivip")
 print(A)
+print(A, all=TRUE)
+show(A)
+summary(A)
+getNames(A)
+
 
 
 print("BOOTSTRAP")

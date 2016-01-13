@@ -1,4 +1,16 @@
 =============
+Release 1.1-3
+Date: 2016-01-13
+=============
+* add checks on the arguments 'options' and 'output'
+* improve display of the'sivip' objects:
+  - rename the slot 'percentage' into 'tsivip.percent' 
+  - add the slot 'fo.isivip.percent'
+  - the slots '*.percent' are displayed by the 'print' function, 
+    when the option 'all=TRUE' is set only
+* reduce time execution of function rlaz
+
+=============
 Release 1.1-2
 Date: 2015-10-28
 =============

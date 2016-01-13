@@ -17,8 +17,6 @@ Type 'q()' to quit R.
 
 > # Example ex18Y14: the same 18 inputs as in X18Y2 but with 14 responses
 > library("sivipm")
-Loading required package: seqinr
-Loading required package: ade4
 > 
 > # -------------------------------------
 > # READ DATA 
@@ -39,7 +37,7 @@ Loading required package: ade4
 Warning message:
 In sivipm(Y, b, nc = nc) :
   sivipm : option tsivip ignored because there is no polynomial description
-> print( A)
+> print( A, all=TRUE)
 fo.isivip 
          V1          V2          V3          V4          V5          V6 
 0.004792694 0.032170481 0.009610074 0.034355202 0.008538489 0.003896552 
@@ -48,13 +46,21 @@ fo.isivip
         V13         V14         V15         V16         V17         V18 
 0.370753498 0.019664093 0.082385433 0.035343384 0.178526426 0.049115109 
 
+fo.isivip.percent 
+       V13        V17        V15        V11        V10        V18        V16 
+37.0753498 17.8526426  8.2385433  7.0243988  5.9926529  4.9115109  3.5343384 
+        V4         V2        V14        V12         V7         V9         V3 
+ 3.4355202  3.2170481  1.9664093  1.5072844  1.1293923  1.1171663  0.9610074 
+        V5         V1         V6         V8 
+ 0.8538489  0.4792694  0.3896552  0.3139617 
+
 simca.signifcomponents 
     V19   V20   V21   V22   V23   V24   V25   V26   V27   V28   V29   V30  V31
 c1 TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE TRUE
 c2 TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE TRUE
-     V32   Q2T
-c1  TRUE  TRUE
-c2 FALSE FALSE
+     V32
+c1  TRUE
+c2 FALSE
 
 lazraq.signifcomponents 
   c1   c2 
@@ -95,7 +101,7 @@ TRUE TRUE
 > # -------------------------------------
 > # CALCULATIONS
 > res1 <- sivipm(Y[,1], zz,nc)
-> print(res1)
+> print(res1, all=TRUE)
 fo.isivip 
           V1           V2           V3           V4           V5           V6 
 0.0016870719 0.0023960921 0.0024994435 0.0049649430 0.0010976140 0.0002561018 
@@ -103,6 +109,14 @@ fo.isivip
 0.0012989655 0.0011880996 0.0010924755 0.0130095173 0.0109610311 0.0030012959 
          V13          V14          V15          V16          V17          V18 
 0.0341644105 0.0021995356 0.0081556112 0.0041859590 0.0223305564 0.0059387660 
+
+fo.isivip.percent 
+       V13        V17        V10        V11        V15        V18         V4 
+28.3692790 18.5427401 10.8027804  9.1017683  6.7722172  4.9314040  4.1227655 
+       V16        V12         V3         V2        V14         V1         V7 
+ 3.4759165  2.4922016  2.0754758  1.9896554  1.8264398  1.4009026  1.0786287 
+        V8         V5         V9         V6 
+ 0.9865684  0.9114314  0.9071645  0.2126606 
 
 tsivip 
         V1         V2         V3         V4         V5         V6         V7 
@@ -112,7 +126,7 @@ tsivip
        V15        V16        V17        V18 
 0.10130698 0.02529825 0.11673339 0.02819176 
 
-percentage 
+tsivip.percent 
       V13       V10       V11        V9       V17       V15        V3        V1 
 19.844497 12.548011  9.541205  6.750087  6.584875  5.714678  5.279147  5.069949 
        V8        V6        V4        V2       V12       V18       V16       V14 
@@ -121,9 +135,9 @@ percentage
  1.164107  1.066623 
 
 simca.signifcomponents 
-      Y1   Q2T
-c1  TRUE  TRUE
-c2 FALSE FALSE
+      Y1
+c1  TRUE
+c2 FALSE
 
 lazraq.signifcomponents 
   c1   c2 
@@ -132,4 +146,4 @@ TRUE TRUE
 > 
 > proc.time()
    user  system elapsed 
-  1.357   0.116   1.464 
+  1.373   0.109   1.482 

@@ -20,8 +20,6 @@ Type 'q()' to quit R.
 > # It is cornell0 with some missing values added
 > #
 > library("sivipm")
-Loading required package: seqinr
-Loading required package: ade4
 > 
 > # -------------------------------------
 > # READ DATA (non expanded data)
@@ -44,15 +42,25 @@ Loading required package: ade4
 > 
 > 
 > nc=2
-> print("TSIVIP with alea")
-[1] "TSIVIP with alea"
+> print(" with alea")
+[1] " with alea"
 > set.seed(15)
-> print(sivipm(YCornell1, P1, nc,  alea=TRUE))
+> A <- sivipm(YCornell1, P1, nc,  alea=TRUE)
+Warning message:
+In sivipm(YCornell1, P1, nc, alea = TRUE) :
+  sivipm : option simca ignored when there are missing values.
+> print(A, all=TRUE)
 fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
  0.102323569  0.005862847  0.087701421  0.073815728  0.038383685  0.119402850 
     Gasoline 
  0.066067328 
+
+fo.isivip.percent 
+     Alkylat Distillation     NaphthaT     NaphthaC     Gasoline      Polymer 
+   24.192291    20.731847    17.769243    14.955854    13.385945     7.776944 
+    Reformat 
+    1.187875 
 
 tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
@@ -60,7 +68,7 @@ Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat
     Gasoline 
   0.13780384 
 
-percentage 
+tsivip.percent 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
    21.000904    19.246065    18.185869    16.165030    11.155792     7.814195 
      Polymer 
@@ -90,20 +98,54 @@ lazraq.signifcomponents
    c1    c2 
  TRUE FALSE 
 
-Warning message:
-In sivipm(YCornell1, P1, nc, alea = TRUE) :
-  sivipm : option simca ignored when there are missing values.
 > 
 > print("ISIVIP ")
 [1] "ISIVIP "
 > A <- sivipm(YCornell1, P1, nc, options="fo.isivip")
 > print(A)
+fo.isivip.percent 
+     Alkylat Distillation     NaphthaT     NaphthaC     Gasoline      Polymer 
+   24.192291    20.731847    17.769243    14.955854    13.385945     7.776944 
+    Reformat 
+    1.187875 
+
+> print(A, all=TRUE)
 fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
  0.102323569  0.005862847  0.087701421  0.073815728  0.038383685  0.119402850 
     Gasoline 
  0.066067328 
 
+fo.isivip.percent 
+     Alkylat Distillation     NaphthaT     NaphthaC     Gasoline      Polymer 
+   24.192291    20.731847    17.769243    14.955854    13.385945     7.776944 
+    Reformat 
+    1.187875 
+
+> show(A)
+fo.isivip 
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+ 0.102323569  0.005862847  0.087701421  0.073815728  0.038383685  0.119402850 
+    Gasoline 
+ 0.066067328 
+
+fo.isivip.percent 
+     Alkylat Distillation     NaphthaT     NaphthaC     Gasoline      Polymer 
+   24.192291    20.731847    17.769243    14.955854    13.385945     7.776944 
+    Reformat 
+    1.187875 
+
+> summary(A)
+fo.isivip.percent 
+     Alkylat Distillation     NaphthaT     NaphthaC     Gasoline      Polymer 
+   24.192291    20.731847    17.769243    14.955854    13.385945     7.776944 
+    Reformat 
+    1.187875 
+
+> getNames(A)
+*** Names of the slots:
+fo.isivip  fo.isivip.percent  
+> 
 > 
 > 
 > print("BOOTSTRAP")
@@ -126,4 +168,4 @@ Gasoline     0.12188605 0.1811747
 > 
 > proc.time()
    user  system elapsed 
-  0.652   0.066   0.711 
+  0.634   0.082   0.711 

@@ -1,6 +1,6 @@
 ###################################################################
 # sivipm R package
-# Copyright INRA 2015
+# Copyright INRA 2016
 # INRA, UR1404, Research Unit MaIAGE
 # F78352 Jouy-en-Josas, France.
 #
@@ -34,17 +34,20 @@
 sivip <- setClass("sivip",
                   slots=c(
                       fo.isivip="vector", # ncol(X)
+                      fo.isivip.percent="vector", # ncol(X)
                       tsivip="vector", # ncol(X)
-                      percentage="vector", # ncol(X)
+                      tsivip.percent="vector", # ncol(X)
                       monosignif="vector", # nmono
                       correlalea="matrix",  # ncol(Y) X ncol(Y)
                       simca.signifcomponents="matrix", #  ncompo X ncol(Y) +1
                        lazraq.signifcomponents="vector", # ncompo
                        output="list"),
                   # default value
-                 prototype = list(fo.isivip=NULL,
+                 prototype = list(
+                   fo.isivip=NULL,
+                   fo.isivip.percent=NULL,
                    tsivip=NULL,
-                   percentage=NULL,
+                   tsivip.percent=NULL,
                    monosignif=NULL,
                    correlalea=NULL,
                    simca.signifcomponents=NULL,
@@ -60,13 +63,19 @@ print.sivip <- function (x, all=FALSE, ...) {
     # all=T : print of all the components.
   # Otherwise, the output slot is not written
   for (nom in slotNames(x)) {
-    if (!is.null(slot(x,nom)) && (nom != "output")) {
+    if (!is.null(slot(x,nom)) &&  (nom != "output")) {
+        if ((nom =="fo.isivip") &&  (all==FALSE)) {
+            next
+        }
+        if ((nom =="tsivip") &&  (all==FALSE)) {
+            next
+        }
       cat( nom, "\n")
       print(slot(x,nom), ...)
       cat("\n")
     }
   }
-
+  
   if (!is.null(x@output)) {
     if (all==TRUE) {
       cat("Component output\n")
@@ -90,10 +99,14 @@ print.sivip <- function (x, all=FALSE, ...) {
 #--------------------------------------------
 # Method 'summary':
 #--------------------------------------------
- setMethod("summary",  signature(object="sivip"),
-           function(object) {
+summary.sivip <-  function(object, ...) {
            print(object, all=FALSE)
-         })
+           return(invisible())
+         }
+
+setMethod("summary",  signature(object="sivip"),
+           definition = summary.sivip)
+
 #--------------------------------------------
 # Method 'getNames'
 # names of the non null components
@@ -114,6 +127,8 @@ setGeneric("getNames",
                    }
                }
                cat("\n")
+
+
                output <- c()
                for (nom in names(x@output)) {
                    if (!is.null(x@output[[nom]]))
@@ -127,7 +142,7 @@ setGeneric("getNames",
                        print(names(x@output$PLS))
                    }
                }
-                   
+
             invisible()       
            }
            )

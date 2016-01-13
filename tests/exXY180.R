@@ -57,7 +57,7 @@ print("TSIVIP without alea on the first response")
 nc <- 21# idem que avant-derniere page du raptech 2012
 nc <- 2 # plus rapide
 res <- sivipm(as.matrix(Y180[,1], ncol=1), zz,nc)
-print(res)
+print(res, all=TRUE)
 # idem que avant-derniere page du raptech 2012
 
 # -------------------------------------

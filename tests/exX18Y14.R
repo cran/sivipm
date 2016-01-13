@@ -17,7 +17,7 @@ Y = X18Y14[,(nX+1):datancol]
 nc=2
 b <- new("polyX", dataX.exp=X)
 A <-  sivipm(Y, b, nc=nc)
-print( A)
+print( A, all=TRUE)
 
 # -------------------------------------
 #  MONOME DESCRIPTION: monomes coded by the inputs numbers
@@ -53,4 +53,4 @@ zz <- vect2polyX(X, Pexp)
 # -------------------------------------
 # CALCULATIONS
 res1 <- sivipm(Y[,1], zz,nc)
-print(res1)
+print(res1, all=TRUE)

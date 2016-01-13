@@ -16,12 +16,12 @@
 \code{\link{sivipm}}. }
 \section{Slots}{
   \describe{
-    \item{\code{fo.isivip}}{ a vector of length equal to the number
-      of X-inputs.}
-    \item{\code{tsivip}}{ a vector of length equal to the number
-      of X-inputs.}
-    \item{\code{percentage}}{  a vector of length equal to the number
-      of X-inputs.}
+     \item{\code{fo.isivip}}{ vector of length equal to the number
+      of X-inputs. Individual sensitivity indices.}
+    \item{\code{fo.isivip.percent}}{ sorted percentages of \code{fo.isivip}.}
+    \item{\code{tsivip}}{ vector of length equal to the number
+      of X-inputs. Total sensitivity indices. }
+    \item{\code{tsivip.percent}}{  sorted percentages of \code{tsivip}.}
     \item{\code{monosignif}}{ a vector of length equal to the number
       of monomials.}
     \item{\code{correlalea}}{ a matrix. The number  of rows and columns
@@ -46,7 +46,8 @@ See description in the function
      \code{print} has an optional argument, \code{all=FALSE}.
      When it is
      set to TRUE, all the components are displayed. Otherwise, the
-     slot \code{output} is not shown.}
+     slots \code{fo.isivip}, \code{tsivip} and
+     \code{output} are hidden.}
    \item{\code{ show}}{ equivalent to \code{ print(all=TRUE)}}
    \item{\code{ summary}}{ equivalent to \code{ print(all=FALSE)}}
    \item{\code{ getNames}}{ display the names of the non-null components}}

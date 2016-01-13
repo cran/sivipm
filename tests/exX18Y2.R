@@ -23,11 +23,11 @@ P <- vect2polyX(X, monomes)
 
 # -------------------------------------
 # CALCULATIONS
-print("TSIVIP without alea")
+print(" without alea")
 nc=2
 # too long: print(sivipm(Y, P,nc))
-res1 <- sivipm(Y[,1], P,nc)
-print(res1)
+res1 <- sivipm(Y[,1], P,nc, output="Q2")
+print(res1, all=TRUE)
 
 # compute tsivip Y by Y
 nc <- 2
@@ -43,7 +43,7 @@ dataexp = XY180[,1:nX]
 Y = XY180[,(nX+1):datancol]
 Pext <- vect2polyXT(varnamesX18, dataexp, monomes)
 res2 <- sivipm(Y[,1], Pext,nc)
-print(res2)
+print(res2, all=TRUE)
 res2@fo.isivip <- res2@fo.isivip[1:18]
 names(res2@fo.isivip) = names(res1@fo.isivip)
 print(all.equal(res1, res2))

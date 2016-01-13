@@ -43,35 +43,35 @@ nc <- 2
 print("TSIVIP without alea")
 A <- sivipm(YCornell0, P1,  nc, options="tsivip")
 getNames(A)
-print(A)
+print(A, all=TRUE)
 # compute tsivip Y by Y: here same results, because there is only one Y
 print(apply(YCornell0, 2, sivipm, P1, nc))
 print("TSIVIP without alea, full polynome degree 2")
 A <- sivipm(YCornell0, PP3,  nc, options=c("tsivip", "fo.isivip", "simca"," lazraq"))
-print(A)
+print(A, all=TRUE)
 print("TSIVIP without alea, full polynome degree 3")
 A <- sivipm(YCornell0, PP4,  nc, options=c("tsivip", "fo.isivip", "simca"," lazraq"))
-print(A)
+print(A, all=TRUE)
 
 print("TSIVIP with alea")
 set.seed(15)
 A <- sivipm(YCornell0, P1,  nc,  alea=TRUE, options="tsivip")
-print(A)
+print(A, all=TRUE)
 
 
 print("ISIVIP ")
 A <- sivipm(YCornell0, P1,  nc, options="fo.isivip")
-print(A)
+print(A, all=TRUE)
 
 
 print("SIMCARULE")
 A <- sivipm(YCornell0, P1,  nc, options=c("simca"," lazraq"))
-print(A)
+print(A, all=TRUE)
 
 
 
 print("ALL RESULTS IN A SINGLE INVOKATION")
-print(sivipm(YCornell0, P1,  nc))
+print(sivipm(YCornell0, P1,  nc), all=TRUE)
 
 
 print("BOOTSTRAP")

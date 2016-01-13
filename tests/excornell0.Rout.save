@@ -19,8 +19,6 @@ Type 'q()' to quit R.
 > # Example cornell0: raw data, 7 inputs, 1 response, no missing
 > #
 > library("sivipm")
-Loading required package: seqinr
-Loading required package: ade4
 > 
 > # -------------------------------------
 > # READ DATA (raw data)
@@ -85,15 +83,15 @@ Number of observations: 12
 > A <- sivipm(YCornell0, P1,  nc, options="tsivip")
 > getNames(A)
 *** Names of the slots:
-tsivip  percentage  
-> print(A)
+tsivip  tsivip.percent  
+> print(A, all=TRUE)
 tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
    0.1743708    0.1051434    0.2620892    0.2404566    0.0775388    0.2554289 
     Gasoline 
    0.1445387 
 
-percentage 
+tsivip.percent 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
    20.807893    20.279110    19.090423    13.843719    11.475274     8.347590 
      Polymer 
@@ -102,28 +100,22 @@ percentage
 > # compute tsivip Y by Y: here same results, because there is only one Y
 > print(apply(YCornell0, 2, sivipm, P1, nc))
 $Y
-fo.isivip 
-Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
- 0.088514873  0.005154289  0.088747415  0.066746055  0.036573521  0.128327153 
-    Gasoline 
- 0.067852728 
+fo.isivip.percent 
+     Alkylat     NaphthaT Distillation     Gasoline     NaphthaC      Polymer 
+   26.628529    18.415535    18.367281    14.079782    13.850142     7.589189 
+    Reformat 
+    1.069541 
 
-tsivip 
-Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
-   0.1743708    0.1051434    0.2620892    0.2404566    0.0775388    0.2554289 
-    Gasoline 
-   0.1445387 
-
-percentage 
+tsivip.percent 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
    20.807893    20.279110    19.090423    13.843719    11.475274     8.347590 
      Polymer 
     6.155991 
 
 simca.signifcomponents 
-     Y1  Q2T
-c1 TRUE TRUE
-c2 TRUE TRUE
+     Y1
+c1 TRUE
+c2 TRUE
 
 lazraq.signifcomponents 
    c1    c2 
@@ -133,12 +125,18 @@ lazraq.signifcomponents
 > print("TSIVIP without alea, full polynome degree 2")
 [1] "TSIVIP without alea, full polynome degree 2"
 > A <- sivipm(YCornell0, PP3,  nc, options=c("tsivip", "fo.isivip", "simca"," lazraq"))
-> print(A)
+> print(A, all=TRUE)
 fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
  0.041766218  0.001116458  0.041859682  0.035812957  0.015445472  0.062277852 
     Gasoline 
  0.032446377 
+
+fo.isivip.percent 
+     Alkylat     NaphthaT Distillation     NaphthaC     Gasoline      Polymer 
+   26.992241    18.142672    18.102163    15.521922    14.062791     6.694321 
+    Reformat 
+    0.483891 
 
 tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
@@ -146,16 +144,16 @@ Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat
     Gasoline 
    0.2569652 
 
-percentage 
+tsivip.percent 
     NaphthaT Distillation     Gasoline      Alkylat     NaphthaC     Reformat 
    17.487880    17.433117    16.682160    15.819287    15.176748    10.834043 
      Polymer 
     6.566765 
 
 simca.signifcomponents 
-      Y  Q2T
-c1 TRUE TRUE
-c2 TRUE TRUE
+      Y
+c1 TRUE
+c2 TRUE
 
 lazraq.signifcomponents 
    c1    c2 
@@ -164,12 +162,18 @@ lazraq.signifcomponents
 > print("TSIVIP without alea, full polynome degree 3")
 [1] "TSIVIP without alea, full polynome degree 3"
 > A <- sivipm(YCornell0, PP4,  nc, options=c("tsivip", "fo.isivip", "simca"," lazraq"))
-> print(A)
+> print(A, all=TRUE)
 fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
 0.0132584375 0.0002622667 0.0132867657 0.0133859268 0.0046497542 0.0214759294 
     Gasoline 
 0.0110427353 
+
+fo.isivip.percent 
+     Alkylat     NaphthaC     NaphthaT Distillation     Gasoline      Polymer 
+  27.7603741   17.3030152   17.1748370   17.1382192   14.2741419    6.0103996 
+    Reformat 
+   0.3390131 
 
 tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
@@ -177,16 +181,16 @@ Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat
     Gasoline 
    0.3390035 
 
-percentage 
+tsivip.percent 
     Gasoline     NaphthaT Distillation     NaphthaC      Alkylat     Reformat 
    16.769569    16.634974    16.583706    15.741566    13.487233    13.232712 
      Polymer 
     7.550241 
 
 simca.signifcomponents 
-      Y  Q2T
-c1 TRUE TRUE
-c2 TRUE TRUE
+      Y
+c1 TRUE
+c2 TRUE
 
 lazraq.signifcomponents 
    c1    c2 
@@ -197,14 +201,14 @@ lazraq.signifcomponents
 [1] "TSIVIP with alea"
 > set.seed(15)
 > A <- sivipm(YCornell0, P1,  nc,  alea=TRUE, options="tsivip")
-> print(A)
+> print(A, all=TRUE)
 tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
   0.17402558   0.10591759   0.26131640   0.23947364   0.07590046   0.25477785 
     Gasoline 
   0.14420031 
 
-percentage 
+tsivip.percent 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
    20.811878    20.291132    19.072267    13.859823    11.484465     8.435536 
      Polymer 
@@ -235,23 +239,29 @@ correlalea
 > print("ISIVIP ")
 [1] "ISIVIP "
 > A <- sivipm(YCornell0, P1,  nc, options="fo.isivip")
-> print(A)
+> print(A, all=TRUE)
 fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
  0.088514873  0.005154289  0.088747415  0.066746055  0.036573521  0.128327153 
     Gasoline 
  0.067852728 
 
+fo.isivip.percent 
+     Alkylat     NaphthaT Distillation     Gasoline     NaphthaC      Polymer 
+   26.628529    18.415535    18.367281    14.079782    13.850142     7.589189 
+    Reformat 
+    1.069541 
+
 > 
 > 
 > print("SIMCARULE")
 [1] "SIMCARULE"
 > A <- sivipm(YCornell0, P1,  nc, options=c("simca"," lazraq"))
-> print(A)
+> print(A, all=TRUE)
 simca.signifcomponents 
-      Y  Q2T
-c1 TRUE TRUE
-c2 TRUE TRUE
+      Y
+c1 TRUE
+c2 TRUE
 
 lazraq.signifcomponents 
    c1    c2 
@@ -262,12 +272,18 @@ lazraq.signifcomponents
 > 
 > print("ALL RESULTS IN A SINGLE INVOKATION")
 [1] "ALL RESULTS IN A SINGLE INVOKATION"
-> print(sivipm(YCornell0, P1,  nc))
+> print(sivipm(YCornell0, P1,  nc), all=TRUE)
 fo.isivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
  0.088514873  0.005154289  0.088747415  0.066746055  0.036573521  0.128327153 
     Gasoline 
  0.067852728 
+
+fo.isivip.percent 
+     Alkylat     NaphthaT Distillation     Gasoline     NaphthaC      Polymer 
+   26.628529    18.415535    18.367281    14.079782    13.850142     7.589189 
+    Reformat 
+    1.069541 
 
 tsivip 
 Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
@@ -275,16 +291,16 @@ Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat
     Gasoline 
    0.1445387 
 
-percentage 
+tsivip.percent 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
    20.807893    20.279110    19.090423    13.843719    11.475274     8.347590 
      Polymer 
     6.155991 
 
 simca.signifcomponents 
-      Y  Q2T
-c1 TRUE TRUE
-c2 TRUE TRUE
+      Y
+c1 TRUE
+c2 TRUE
 
 lazraq.signifcomponents 
    c1    c2 
@@ -316,4 +332,4 @@ Gasoline     0.12949618 0.1681360
 > 
 > proc.time()
    user  system elapsed 
-  0.830   0.114   0.936 
+  0.813   0.089   0.892 

@@ -1,6 +1,6 @@
 ###################################################################
 # sivipm R package
-# Copyright INRA 2015
+# Copyright INRA 2016
 # INRA, UR1404, Research Unit MaIAGE
 # F78352 Jouy-en-Josas, France.
 #
@@ -71,8 +71,9 @@ fastregpls2nomissing <- function(X.old, YY.old,C, P, T, U, W, h, n, p, q, nc)
             U[hcur, ] <- u.new
             T[hcur, ] <- t.new
             W[hcur, ] <- w.new
-            A <- T[1:hcur, , drop=FALSE] %*% t(T[1:hcur, , drop=FALSE]            ## A is now a matrix (n X hcur) 
-)
+            A <- T[1:hcur, , drop=FALSE] %*% t(T[1:hcur, , drop=FALSE])
+            ## A is now a matrix (hcur X hcur) 
+
             A <- solve(A)            
             ## A  is now a matrix (hcur,hcur)
 

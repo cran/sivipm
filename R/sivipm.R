@@ -1,6 +1,6 @@
 ##################################################################
 # sivipm R package
-# Copyright INRA 2015
+# Copyright INRA 2016
 # INRA, UR1404, Research Unit MaIAGE
 # F78352 Jouy-en-Josas, France.
 #
@@ -85,6 +85,19 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
     Y <- as.matrix(Y) # in case of a vector=> a matrix with one column
     
     # Access to the options
+    # Check options
+    if (is.null(options)) stop("At least one value in argument 'options' must be given")
+    oo <- options
+    oo[grepl("isivip", options, ignore.case = TRUE)]=NA
+    oo[grepl("tsivip", options, ignore.case = TRUE)]=NA
+    oo[grepl("simca", options, ignore.case = TRUE)]=NA
+    oo[grepl("lazraq", options, ignore.case = TRUE)]=NA
+    
+    if (!all(is.na(oo))) {
+      stop(paste("Bad  values in argument 'options'. Valid values are: 'fo.isivip', 'tsivip', 'simca', 'lazraq' ", sep=""))
+    }
+    
+    # Set option indicators      
     opt.isivip <- any(grepl("isivip", options, ignore.case = TRUE)) || any(grepl("isivip", 
         output, ignore.case = TRUE))
     opt.tsivip <- any(grepl("tsivip", options, ignore.case = TRUE))
@@ -104,8 +117,11 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
         na.miss <- TRUE else na.miss <- FALSE
     
     # with/without additional results
-    if (!is.null(output)) 
-        routput <- TRUE else routput <- FALSE
+    if (!is.null(output))  {
+      if (!all(output %in% c("isivip", "VIP","RSS","PRESS","Q2","betaNat","PLS")))
+        stop("Bad values in argument 'output'. Valid values are: 'isivip', 'VIP','RSS','PRESS','Q2','betaNat','PLS' ")
+      routput <- TRUE
+    }  else routput <- FALSE
     
     if (fast  && na.miss) {
         warning("sivipm : option fast ignored when there are missing values.")
@@ -173,7 +189,7 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
     rett$isivipalea <- NULL
     nrett <- length(rett$tsivip)
     rett$tsivip <- rett$tsivip[-nrett]
-    rett$percentage <- rett$percentage[-nrett]
+    rett$tsivip.percent <- rett$tsivip.percent[-nrett]
     nmono <- length(rett$monosignif)
     rett$monosignif <- rett$monosignif[-nmono]
 
@@ -201,6 +217,10 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
         if (!is.null(colnames(Indic))) {
           names(retour@fo.isivip) <-  colnames(Indic)
         }
+        # Percentage fo.isivip
+        som <- sum(retour@fo.isivip)
+        retour@fo.isivip.percent <- sort( (retour@fo.isivip * 100)/som,
+                                         decreasing=TRUE)
     }
 
      
@@ -253,17 +273,10 @@ sivipm <- function(Y, XIndic, nc = 2, options = c("fo.isivip", "tsivip", "simca"
               warning("Q2 is not calculated when there are missing values")
             } else {
                 retour@output$Q2 <- regpls$Q2
-                retour@output$Q2ckh <- regpls$Q2ckh
                 retour@output$Q2cum <- regpls$Q2cum
-                retour@output$Q2cum.percent <- sort((regpls$Q2cum/sum(regpls$Q2cum))*100, decreasing=TRUE)
-                # Put in column to homogeneize the display
-                retour@output$Q2cum <- matrix(retour@output$Q2cum, ncol=1, dimnames=list(names(retour@output$Q2cum), "Q2cum"))
-
-                retour@output$Q2cum.percent <- matrix(retour@output$Q2cum.percent, ncol=1, dimnames=list(names(retour@output$Q2cum.percent), "decreasing.Q2cum.percent"))
                 
                 regpls$Q2 <- NULL
                 regpls$Q2cum <- NULL
-                regpls$Q2ckh <- NULL
             }
             }
           
@@ -443,7 +456,7 @@ tsivipnoalea <- function(VIP, Y, Indic, nc = 2, graph = FALSE) {
     names(tsivip) <- varnames
     
     percent <- sort((tsivip/sum(tsivip)) * 100, decreasing = TRUE)
-    ret <- list(tsivip = tsivip, percentage = percent, Evol = Evol)
+    ret <- list(tsivip = tsivip, tsivip.percent = percent, Evol = Evol)
     return(ret)
     
 }  # end tsivipmnoalea
@@ -492,9 +505,11 @@ tsivipalea <- function(Y, XIndic, nc,
     tsivipa <- t(Indicalea) %*% isivipalea
     tsivipa <- as.vector(tsivipa)
     names(tsivipa) <- varnames
-    percent <- sort((tsivipa/sum(tsivipa)) * 100, decreasing = TRUE)
+    percentt <- sort((tsivipa/sum(tsivipa)) * 100, decreasing = TRUE)
     correlation <- cor(X_alea, Y)
-    retour <- list(tsivip = tsivipa, isivipalea = leisivipalea, percentage = percent, 
+    retour <- list(isivipalea = leisivipalea,
+                   tsivip = tsivipa,
+                   tsivip.percent = percentt, 
         monosignif = signif, correlalea = correlation)
     if (output) {
         retour$regpls <- regpls
@@ -515,16 +530,19 @@ rlaz <- function(TT, Y, nc) {
     alpha <- 0.05  # alpha is fixed
     nobs <- nrow(YY)
     stu <- qt(1 - alpha, nobs)
-    res <- apply(TT, 1, function(T, Y, nc, nobs, stu) {
-        mat <- cbind(Y, as.matrix(T, ncol = 1))
+
+   TTmat <- as.matrix(TT)
+     mat <- cbind(YY, matrix(TTmat[1, ],  ncol = 1))
+    res <- rep(FALSE, nc)
+    for (irow in 1:nc) {
+        mat[, ncol(mat)] <-TTmat[irow,]
         cr <- cor(mat, use = "na.or.complete")[1, 2]
-        tlaz <- (sqrt(nobs) * cr)/sqrt(1 - cr * cr)
+         tlaz <- (sqrt(nobs) * cr)/sqrt(1 - cr * cr)
+        
         if (tlaz > stu) {
-            return(TRUE)
-        } else {
-            return(FALSE)
+            res[irow] <- TRUE
         }
-    }, Y, nc, nobs, stu)
+    } # fin irow
     names(res) <- paste("c", 1:length(res), sep="")
     return(list(lazraq.signifcomponents = res))
 }  # end rlaz 
