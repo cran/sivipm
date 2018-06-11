@@ -51,7 +51,7 @@ sivip <- setClass("sivip",
                    monosignif=NULL,
                    correlalea=NULL,
                    simca.signifcomponents=NULL,
-#                   simca.signif2components=NULL,
+                   simca.signif2components=NULL,
                    lazraq.signifcomponents=NULL,
                    output=NULL
                   ))
