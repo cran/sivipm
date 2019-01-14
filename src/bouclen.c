@@ -575,3 +575,19 @@ int boucle (double *Xold, double * YYold,
   return(h);
 } /* fin boucle */
 
+
+// Added by CRAN 2018-06-11
+
+#include <stdlib.h> // for NULL
+#include <R_ext/Rdynload.h>
+
+static const R_CMethodDef CEntries[] = {
+    {"boucle", (DL_FUNC) &boucle, 25},
+    {NULL, NULL, 0}
+};
+
+void R_init_sivipm(DllInfo *dll)
+{
+    R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
+}

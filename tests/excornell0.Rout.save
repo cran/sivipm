@@ -1,7 +1,7 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2018-06-11 r74880) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -100,11 +100,23 @@ tsivip.percent
 > # compute tsivip Y by Y: here same results, because there is only one Y
 > print(apply(YCornell0, 2, sivipm, P1, nc))
 $Y
+fo.isivip 
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+ 0.088514873  0.005154289  0.088747415  0.066746055  0.036573521  0.128327153 
+    Gasoline 
+ 0.067852728 
+
 fo.isivip.percent 
      Alkylat     NaphthaT Distillation     Gasoline     NaphthaC      Polymer 
    26.628529    18.415535    18.367281    14.079782    13.850142     7.589189 
     Reformat 
     1.069541 
+
+tsivip 
+Distillation     Reformat     NaphthaT     NaphthaC      Polymer      Alkylat 
+   0.1743708    0.1051434    0.2620892    0.2404566    0.0775388    0.2554289 
+    Gasoline 
+   0.1445387 
 
 tsivip.percent 
     NaphthaT      Alkylat     NaphthaC Distillation     Gasoline     Reformat 
@@ -332,4 +344,4 @@ Gasoline     0.12949618 0.1681360
 > 
 > proc.time()
    user  system elapsed 
-  0.813   0.089   0.892 
+  1.132   0.068   1.190 

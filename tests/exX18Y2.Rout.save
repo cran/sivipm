@@ -1,7 +1,7 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2018-06-11 r74880) -- "Unsuffered Consequences"
+Copyright (C) 2018 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -105,6 +105,14 @@ c2 0.3013870   0.3013870
 > nc <- 2
 > print(apply(Y, 2, sivipm, P, nc))
 $IRStot
+fo.isivip 
+        ALTI         MACH       POWERS          EAI          CAP          YAW 
+0.0004159798 0.0027788630 0.0019362157 0.0023618638 0.0003880902 0.0003941822 
+        ROLL        PITCH          VIS           RH           TA        HBASE 
+0.0006028390 0.0005794923 0.0008899741 0.0086311840 0.0121604228 0.0014948659 
+        HOUR        MODEL       CLOUDS       IHAZE1       IHAZE2       IHAZE3 
+0.0384764857 0.0031700738 0.0130406531 0.0054257575 0.0232065532 0.0053059964 
+
 fo.isivip.percent 
       HOUR     IHAZE2     CLOUDS         TA         RH     IHAZE1     IHAZE3 
 31.7307000 19.1379270 10.7543359 10.0284295  7.1179450  4.4745012  4.3757369 
@@ -112,6 +120,14 @@ fo.isivip.percent
  2.6142892  2.2916664  1.9477764  1.5967539  1.2327826  0.7339418  0.4971479 
      PITCH       ALTI        YAW        CAP 
  0.4778944  0.3430493  0.3250732  0.3200494 
+
+tsivip 
+       ALTI        MACH      POWERS         EAI         CAP         YAW 
+0.083319445 0.066190410 0.092635835 0.060196890 0.010544439 0.084238013 
+       ROLL       PITCH         VIS          RH          TA       HBASE 
+0.009247021 0.084131556 0.120828055 0.164963460 0.179487781 0.056785359 
+       HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
+0.405366044 0.028182504 0.158786821 0.037072451 0.096611570 0.039213904 
 
 tsivip.percent 
       HOUR         TA         RH     CLOUDS        VIS     IHAZE2     POWERS 
@@ -132,6 +148,14 @@ TRUE TRUE
 
 
 $IRMS
+fo.isivip 
+       ALTI        MACH      POWERS         EAI         CAP         YAW 
+0.001980457 0.002911070 0.004532535 0.009677110 0.002121020 0.000744214 
+       ROLL       PITCH         VIS          RH          TA       HBASE 
+0.002322165 0.001595438 0.000103977 0.018808754 0.006098071 0.002840054 
+       HOUR       MODEL      CLOUDS      IHAZE1      IHAZE2      IHAZE3 
+0.032113870 0.001581142 0.004617170 0.001506413 0.012524301 0.004743044 
+
 fo.isivip.percent 
        HOUR          RH      IHAZE2         EAI          TA      IHAZE3 
 28.97819568 16.97222242 11.30139867  8.73221413  5.50264129  4.27992165 
@@ -139,6 +163,14 @@ fo.isivip.percent
  4.16633865  4.08996749  2.62682661  2.56274473  2.09542315  1.91391894 
        ALTI       PITCH       MODEL      IHAZE1         YAW         VIS 
  1.78708024  1.43965606  1.42675586  1.35932284  0.67154718  0.09382443 
+
+tsivip 
+      ALTI       MACH     POWERS        EAI        CAP        YAW       ROLL 
+0.09273028 0.07891999 0.10539752 0.12634780 0.03853816 0.09030197 0.03473901 
+     PITCH        VIS         RH         TA      HBASE       HOUR      MODEL 
+0.09045068 0.10536528 0.26852276 0.12032948 0.06816695 0.34589469 0.01350400 
+    CLOUDS     IHAZE1     IHAZE2     IHAZE3 
+0.06140131 0.01278159 0.07900968 0.02202980 
 
 tsivip.percent 
       HOUR         RH        EAI         TA     POWERS        VIS       ALTI 
@@ -221,4 +253,4 @@ TRUE TRUE
 > 
 > proc.time()
    user  system elapsed 
-  2.122   0.094   2.206 
+  2.289   0.065   2.355 
