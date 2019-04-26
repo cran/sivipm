@@ -1,7 +1,7 @@
 
-R version 3.2.0 (2015-04-16) -- "Full of Ingredients"
-Copyright (C) 2015 The R Foundation for Statistical Computing
-Platform: x86_64-unknown-linux-gnu (64-bit)
+R Under development (unstable) (2019-03-06 r76206) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -152,14 +152,14 @@ fo.isivip  fo.isivip.percent
 [1] "BOOTSTRAP"
 > set.seed(15)
 > print(sivipboot(YCornell1, P1, B=2 , nc=2, alpha=0.05))
-                 IC.inf    IC.sup
-Distillation 0.09771169 0.2295385
-Reformat     0.10719424 0.1356422
-NaphthaT     0.20378462 0.2150536
-NaphthaC     0.20462377 0.2227959
-Polymer      0.06661712 0.1705940
-Alkylat      0.23073065 0.2627232
-Gasoline     0.12188605 0.1811747
+                 IC.inf     IC.sup
+Distillation 0.15491542 0.22276602
+Reformat     0.07963516 0.11069095
+NaphthaT     0.18127535 0.25077689
+NaphthaC     0.19023764 0.19106901
+Polymer      0.04979259 0.06709815
+Alkylat      0.25180171 0.26556083
+Gasoline     0.15029798 0.25302185
 > 
 > 
 > 
@@ -168,4 +168,4 @@ Gasoline     0.12188605 0.1811747
 > 
 > proc.time()
    user  system elapsed 
-  0.634   0.082   0.711 
+  0.616   0.072   0.675 

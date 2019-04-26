@@ -1,8 +1,8 @@
-4825de08c72073910688a10904c0cf57 *DESCRIPTION
+65ce72776568f68b78983f8db0546256 *DESCRIPTION
 b14edd3fd1ef0f2adcbf4b2f29147daa *NAMESPACE
 3a58512bd8617f3014a7585fcb6d067a *NEWS
 f378a1101816aaf056810947abcd17c2 *R/allmono.R
-6b8d2fe217a47febe43419f8b0e69a0e *R/class-sivip.R
+3755259d67a9ab992c42647add237069 *R/class-sivip.R
 a203fc0e022cdc560fb3421b8d9ac211 *R/factorsplit.R
 cca0e4084eb88d922585e72a08339340 *R/fastregpls2.R
 0849e0a9471d43fa94851a7805747bc2 *R/polynome.R
@@ -46,6 +46,6 @@ f4aa20f216084dd4c7a402bd0b7ee81b *tests/exX18Y14.Rout.save
 8de08508f85a6e3283f7971a70cd9f9a *tests/exXY180.R
 0a3770a8ad37f4ea1f4ca8a5c7edc509 *tests/exXY180.Rout.save
 37279655bc9391809cb636ce52635d70 *tests/excornell0.R
-a49734d293b096f37791ea4eb560e0ed *tests/excornell0.Rout.save
+45f355a6863d327346d4ee6daf19d9c7 *tests/excornell0.Rout.save
 cda5bee9d046e4ab8973fa2a574db59d *tests/excornell1.R
-68caaf2f2fe1205a086ad842b43a4cd6 *tests/excornell1.Rout.save
+918ce48efc8ab04363acd4c19f1db306 *tests/excornell1.Rout.save

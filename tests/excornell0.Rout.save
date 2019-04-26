@@ -1,6 +1,6 @@
 
-R Under development (unstable) (2018-06-11 r74880) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
+R Under development (unstable) (2019-03-06 r76206) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -326,14 +326,14 @@ lazraq.signifcomponents
 > set.seed(15)
 > A <- sivipboot(YCornell0,P1, B , nc, alpha=0.05)
 > print(A)
-                 IC.inf    IC.sup
-Distillation 0.15525619 0.1893540
-Reformat     0.09139673 0.1028795
-NaphthaT     0.23288428 0.2838746
-NaphthaC     0.21139405 0.2481983
-Polymer      0.05090774 0.1425086
-Alkylat      0.22988675 0.2735927
-Gasoline     0.12949618 0.1681360
+                 IC.inf     IC.sup
+Distillation 0.13130052 0.17133907
+Reformat     0.08858008 0.12207359
+NaphthaT     0.19695078 0.25744060
+NaphthaC     0.21040923 0.23661352
+Polymer      0.02817705 0.04189486
+Alkylat      0.27001081 0.29789317
+Gasoline     0.14263848 0.25500756
 > 
 > set.seed(15)
 > B <- sivipboot(YCornell0,P1, B , nc, fast=T,  alpha=0.05)
@@ -344,4 +344,4 @@ Gasoline     0.12949618 0.1681360
 > 
 > proc.time()
    user  system elapsed 
-  1.132   0.068   1.190 
+  0.908   0.088   0.988 
